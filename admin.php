@@ -1,4 +1,12 @@
 <?php
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+
+  // Set Timezone to East Africa (Kenya)
+  date_default_timezone_set('Africa/Nairobi');
+
+  $page_title = 'Home Page';
+  require_once('includes/load.php');
   $page_title = 'Admin Home Page';
   require_once('includes/load.php');
   page_require_level(1);
@@ -174,17 +182,17 @@
             </tr>
           </thead>
           <tbody>
-           <?php foreach ($recent_sales as $recent_sale): ?>
-           <tr>
-             <td>
-              <a href="edit_sale.php?id=<?php echo (int)$recent_sale['id']; ?>" class="text-dark">
-               <?php echo remove_junk(first_character($recent_sale['name'])); ?>
-              </a>
-              <div class="small text-muted"><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></div>
-             </td>
-             <td class="text-right"><strong>$<?php echo remove_junk(first_character($recent_sale['price'])); ?></strong></td>
-           </tr>
-           <?php endforeach; ?>
+            <?php foreach ($recent_sales as $recent_sale): ?>
+            <tr>
+              <td>
+               <a href="edit_sale.php?id=<?php echo (int)$recent_sale['id']; ?>" class="text-dark">
+                <?php echo remove_junk(first_character($recent_sale['name'])); ?>
+               </a>
+               <div class="small text-muted"><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></div>
+              </td>
+              <td class="text-right"><strong>Ksh <?php echo remove_junk(first_character($recent_sale['price'])); ?></strong></td>
+            </tr>
+            <?php endforeach; ?>
           </tbody>
         </table>
       </div>
@@ -211,7 +219,7 @@
                   <small class="text-muted"><?php echo remove_junk(first_character($recent_product['categorie'])); ?></small>
                 </div>
                 <span class="pull-right text-success" style="font-weight: bold;">
-                  $<?php echo (int)$recent_product['sale_price']; ?>
+                  Ksh <?php echo (int)$recent_product['sale_price']; ?>
                 </span>
                 <div class="clearfix"></div>
             </a>

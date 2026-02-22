@@ -1,4 +1,5 @@
-</div> </div> <?php if ($session->isUserLoggedIn(true)): ?>
+</div> </div> 
+<?php if ($session->isUserLoggedIn(true)): ?>
     <footer class="footer">
       <div class="container-fluid">
         <div class="row" style="display: flex; align-items: center;">
@@ -22,9 +23,6 @@
   <?php endif; ?>
 
   <style>
-    /* =========================================
-       HIGH-VISIBILITY MODERN FOOTER DESIGN
-    ========================================= */
     .footer {
       background: #ffffff;
       padding: 25px 35px; 
@@ -70,17 +68,15 @@
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* Adjust page spacing based on login status */
     .page {
       <?php if ($session->isUserLoggedIn(true)): ?>
         margin-bottom: 40px;
       <?php else: ?>
         margin-bottom: 0;
-        padding-top: 0; /* Ensures login box stays centered */
+        padding-top: 0; 
       <?php endif; ?>
     }
 
-    /* Datepicker Styling remains global for potential admin use */
     .datepicker {
       font-size: 1.1rem !important;
       padding: 20px !important;

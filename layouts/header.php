@@ -1,4 +1,27 @@
-<?php $user = current_user(); ?>
+<?php 
+  // Ensure your load file is included to prevent "Undefined Variable" errors
+  require_once('includes/load.php'); 
+
+  $user = current_user(); 
+  // Set Timezone to East Africa (Kenya)
+  date_default_timezone_set('Africa/Nairobi');
+
+  // Logic to fetch counts for the sidebar notifications
+  $pending_count = 0;
+  $low_stock_count = 0;
+
+  if(isset($user['user_level']) && $user['user_level'] === '1'){
+    // Count pending users
+    $notif_user = $db->query("SELECT COUNT(id) as total FROM users WHERE status = '0'");
+    $pending_data = $db->fetch_assoc($notif_user);
+    $pending_count = $pending_data['total'];
+
+    // Count low stock items (Threshold: 5)
+    $low_stock_query = $db->query("SELECT COUNT(id) as total FROM products WHERE quantity <= 5");
+    $low_stock_data = $db->fetch_assoc($low_stock_query);
+    $low_stock_count = $low_stock_data['total'];
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,32 +38,54 @@
     <link rel="stylesheet" href="libs/css/main.css" />
 
     <style>
-      body { font-family: 'Inter', sans-serif; background: #f4f7f6; }
+      body { 
+        font-family: 'Inter', sans-serif; 
+        background: #f4f7f6; 
+        margin: 0;
+        padding: 0;
+      }
       
-      /* Modern Header Styling */
+      /* --- Notification Badge Styles --- */
+      .notif-badge {
+        background-color: #e74c3c !important;
+        color: white !important;
+        font-size: 10px !important;
+        padding: 2px 7px !important;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+        position: absolute !important;
+        right: 40px; 
+        top: 50%;
+        transform: translateY(-50%);
+        box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+        z-index: 10;
+      }
+
+      /* --- Header & Layout Styling --- */
       #header {
         background: #ffffff;
-        height: 70px;
+        height: 100px;
         position: fixed;
         width: 100%;
         z-index: 1000;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        padding: 0 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
       }
 
-      /* Logo container updated for Image + Text */
+      .header-left {
+        display: flex;
+        align-items: center;
+      }
+
       .logo {
         background: #1a1d21;
         color: #fff;
         font-weight: 700;
-        font-size: 14px; /* Slightly smaller to fit both */
-        padding: 10px 10px;
-        height: 100px; /* Increased height for stack */
+        font-size: 14px;
+        height: 100px;
         width: 250px;
-        margin-left: -20px;
         text-align: center;
         letter-spacing: 1px;
         text-transform: uppercase;
@@ -49,10 +94,19 @@
         align-items: center;
         justify-content: center;
         gap: 5px;
-        line-height: normal;
+        transition: all 0.3s ease;
       }
 
-      /* Logo Image styled like Profile Picture */
+      .toggle-sidebar {
+        font-size: 24px;
+        cursor: pointer;
+        color: #3498db;
+        margin-left: 15px;
+        padding: 10px;
+        transition: transform 0.3s;
+      }
+      .toggle-sidebar:hover { transform: scale(1.1); }
+
       .logo-img-circle {
         width: 45px;
         height: 45px;
@@ -67,11 +121,40 @@
         color: #888;
         font-size: 13px;
         font-weight: 400;
-        margin-left: 20px;
+        margin-left: 15px;
       }
 
-      /* Profile Dropdown Styling */
-      .info-menu { margin: 0; padding-right: 20px; }
+      /* --- Collapsible Logic --- */
+      body.sidebar-collapsed .sidebar { left: -250px; }
+      body.sidebar-collapsed .page { padding-left: 0; }
+      body.sidebar-collapsed .logo { width: 0; overflow: hidden; padding: 0; }
+
+      .page {
+        padding-top: 110px;
+        padding-left: 250px;
+        transition: all .3s ease;
+      }
+
+      .sidebar {
+        width: 250px;
+        position: fixed;
+        top: 100px;
+        height: 100%;
+        background: #1a1d21;
+        z-index: 999;
+        transition: all 0.3s ease;
+        left: 0;
+        overflow-y: auto;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar { left: -250px; }
+        .page { padding-left: 0; }
+        body.sidebar-open .sidebar { left: 0; }
+      }
+
+      /* --- Profile Dropdown --- */
+      .profile { padding-right: 25px; }
       .profile a.toggle {
         text-decoration: none;
         color: #333;
@@ -80,7 +163,6 @@
         align-items: center;
         gap: 10px;
       }
-
       .img-circle.img-inline {
         width: 40px;
         height: 40px;
@@ -88,61 +170,28 @@
         padding: 2px;
         object-fit: cover;
       }
-
-      .dropdown-menu {
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-radius: 12px;
-        padding: 10px;
-        margin-top: 15px;
-      }
-
-      .dropdown-menu li a {
-        padding: 10px 15px;
-        border-radius: 8px;
-        transition: all 0.2s;
-      }
-
-      .dropdown-menu li a:hover {
-        background: #f0f7ff;
-        color: #3498db;
-      }
-
-      /* Page Content Adjustment */
-      .page {
-        padding-top: 110px; /* Increased to account for taller logo box */
-        padding-left: 250px;
-        transition: all .3s;
-      }
-
-      .sidebar {
-        width: 250px;
-        position: fixed;
-        top: 100px; /* Adjusted to match logo height */
-        height: 100%;
-        background: #1a1d21;
-        z-index: 999;
-      }
-
-      @media (max-width: 768px) {
-        .sidebar { left: -250px; }
-        .page { padding-left: 0; }
-      }
     </style>
   </head>
   <body>
-  <?php  if ($session->isUserLoggedIn(true)): ?>
-    <header id="header" style="height: 100px;"> <div class="logo pull-left">
-        <img src="libs/images/logo.jpg" alt="Logo" class="logo-img-circle">
-        <div>MoonLit <span style="color:#3498db;">Warehouse</span></div>
-      </div>
-      
-      <div class="header-content">
-        <div class="header-date pull-left">
+  <?php if ($session->isUserLoggedIn(true)): ?>
+    <header id="header">
+      <div class="header-left">
+        <div class="logo">
+          <img src="libs/images/logo.jpg" alt="Logo" class="logo-img-circle">
+          <div>MoonLit <span style="color:#3498db;">Warehouse</span></div>
+        </div>
+        
+        <div class="toggle-sidebar" onclick="toggleSidebar()">
+          <i class="glyphicon glyphicon-menu-hamburger"></i>
+        </div>
+
+        <div class="header-date">
           <i class="glyphicon glyphicon-time" style="margin-right: 5px;"></i>
           <strong><?php echo date("F j, Y, g:i a");?></strong>
         </div>
-
+      </div>
+      
+      <div class="header-content">
         <div class="pull-right clearfix">
           <ul class="info-menu list-inline list-unstyled">
             <li class="profile">
@@ -151,22 +200,10 @@
                 <span><?php echo remove_junk(ucfirst($user['name'])); ?> <i class="caret"></i></span>
               </a>
               <ul class="dropdown-menu">
-                <li>
-                    <a href="profile.php?id=<?php echo (int)$user['id'];?>">
-                        <i class="glyphicon glyphicon-user"></i> Profile
-                    </a>
-                </li>
-                <li>
-                    <a href="edit_account.php">
-                        <i class="glyphicon glyphicon-cog"></i> Settings
-                    </a>
-                </li>
+                <li><a href="profile.php?id=<?php echo (int)$user['id'];?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
+                <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
                 <li class="divider"></li>
-                <li class="last">
-                    <a href="logout.php" style="color: #e74c3c;">
-                        <i class="glyphicon glyphicon-off"></i> Logout
-                    </a>
-                </li>
+                <li class="last"><a href="logout.php" style="color: #e74c3c;"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
               </ul>
             </li>
           </ul>
@@ -182,8 +219,17 @@
       <?php elseif($user['user_level'] === '3'): ?>
         <?php include_once('user_menu.php');?>
       <?php endif;?>
-   </div>
-<?php endif;?>
+    </div>
 
-<div class="page">
-  <div class="container-fluid">
+    <script>
+      function toggleSidebar() {
+        document.body.classList.toggle('sidebar-collapsed');
+        if(window.innerWidth <= 768) {
+          document.body.classList.toggle('sidebar-open');
+        }
+      }
+    </script>
+  <?php endif;?>
+
+  <div class="page">
+    <div class="container-fluid">

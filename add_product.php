@@ -189,7 +189,7 @@
                 <div class="form-group">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-export"></i></span>
-                    <input type="number" step="0.01" class="form-control" name="saleing-price" placeholder="Retail Price">
+                    <input type="number" step="0.01" class="form-control" name="saleing-price" placeholder="Selling Price">
                   </div>
                 </div>
               </div>

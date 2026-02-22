@@ -1,15 +1,14 @@
 <?php
 
-class  Media {
+class Media {
 
   public $imageInfo;
   public $fileName;
   public $fileType;
   public $fileTempPath;
-  //Set destination for upload
+  // Set destination for upload
   public $userPath = SITE_ROOT.DS.'..'.DS.'uploads/users';
   public $productPath = SITE_ROOT.DS.'..'.DS.'uploads/products';
-
 
   public $errors = array();
   public $upload_errors = array(
@@ -22,22 +21,16 @@ class  Media {
     7 => 'Failed to write file to disk.',
     8 => 'A PHP extension stopped the file upload.'
   );
-  public $upload_extensions = array(
-   'gif',
-   'jpg',
-   'jpeg',
-   'png',
-  );
+  public $upload_extensions = array('gif', 'jpg', 'jpeg', 'png');
   
   public function file_ext($filename){
      $ext = strtolower(substr( $filename, strrpos( $filename, '.' ) + 1 ) );
      if(in_array($ext, $this->upload_extensions)){
        return true;
      }
-   }
+  }
 
-  public function upload($file)
-  {
+  public function upload($file) {
     if(!$file || empty($file) || !is_array($file)):
       $this->errors[] = "No file was uploaded.";
       return false;
@@ -54,13 +47,8 @@ class  Media {
       $this->fileTempPath = $file['tmp_name'];
      return true;
     endif;
-
   }
 
-  /*--------------------------------------------------------------*/
-  /* New Function: Move file ONLY (No DB Insert)
-  /* Used for replacing existing images
-  /*--------------------------------------------------------------*/
   public function move_file(){
     if(!empty($this->errors)){ return false; }
     if(empty($this->fileName) || empty($this->fileTempPath)){
@@ -94,8 +82,7 @@ class  Media {
       $this->errors[] = "The file {$this->fileName} already exists.";
       return false;
     }
-    if(move_uploaded_file($this->fileTempPath,$this->productPath.'/'.$this->fileName))
-    {
+    if(move_uploaded_file($this->fileTempPath,$this->productPath.'/'.$this->fileName)) {
       if($this->insert_media()){
         unset($this->fileTempPath);
         return true;
@@ -123,5 +110,39 @@ class  Media {
     }
     return false;
   }
-}
+
+  /*--- NEW FUNCTIONS FOR USER PROFILES ---*/
+
+  public function process_user($id){
+    if(!empty($this->errors)){ return false; }
+    
+    if(empty($this->fileName) || empty($this->fileTempPath)){
+        $this->errors[] = "The file upload location was not available.";
+        return false;
+    }
+    
+    if(!is_writable($this->userPath)){
+        $this->errors[] = "The user upload directory is not writable.";
+        return false;
+    }
+
+    if(move_uploaded_file($this->fileTempPath, $this->userPath.DS.$this->fileName)){
+        if($this->update_userImg($id)){
+          unset($this->fileTempPath);
+          return true;
+        }
+    } else {
+        $this->errors[] = "The file upload failed. Check folder permissions.";
+        return false;
+    }
+  }
+
+  private function update_userImg($id){
+     global $db;
+     $sql = "UPDATE users SET image='{$db->escape($this->fileName)}' WHERE id='{$db->escape((int)$id)}'";
+     $result = $db->query($sql);
+     return ($result && $db->affected_rows() === 1 ? true : false);
+  }
+
+} // <--- THIS IS THE ONLY CLOSING BRACE FOR THE CLASS
 ?>

@@ -1,4 +1,6 @@
 <?php
+    error_reporting(E_ALL);
+ini_set('display_errors', 1);
   ob_start();
   require_once('includes/load.php');
   if($session->isUserLoggedIn(true)) { redirect('home.php', false);}
@@ -25,7 +27,7 @@
     border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 40px 30px;
     border-radius: 20px;
-    width: 380px;
+    width: 480px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     color: #ffffff;
     text-align: center;

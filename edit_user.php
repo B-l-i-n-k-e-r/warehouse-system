@@ -131,8 +131,8 @@
               <span class="form-label" style="margin-bottom: 5px;">Permissions Quick-Reference:</span>
               <ul style="padding-left: 20px; font-size: 12px; color: #475569; margin:0;">
                 <li><strong>Admin (L1):</strong> Full system access and user management.</li>
-                <li><strong>Special (L2):</strong> Inventory edits and location management.</li>
-                <li><strong>User (L3):</strong> Sales processing and report printing only.</li>
+                <li><strong>Manager (L2):</strong> Inventory edits and location management.</li>
+                <li><strong>Staff (L3):</strong> Sales processing and report printing only.</li>
               </ul>
             </div>
 
@@ -154,7 +154,7 @@
             <div class="form-group">
               <label class="form-label">New Password</label>
               <input type="password" class="form-control modern-input" name="password" placeholder="Create a strong password">
-              <p class="help-block" style="font-size: 11px;">Password will be encrypted using SHA-1.</p>
+             
             </div>
             <button type="submit" name="update-pass" class="btn btn-danger btn-action pull-right">Apply New Password</button>
           </form>

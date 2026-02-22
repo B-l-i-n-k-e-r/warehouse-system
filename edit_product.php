@@ -58,9 +58,19 @@
   .section-tag { font-size: 11px; font-weight: 700; color: #6366f1; text-transform: uppercase; margin-bottom: 15px; display: block; }
   .preview-card { background: #f8fafc; border-radius: 10px; padding: 20px; text-align: center; border: 1px solid #e2e8f0; }
   .preview-img { width: 100%; max-width: 200px; border-radius: 8px; margin-bottom: 15px; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-  .form-control { border-radius: 8px; height: 40px; }
+  .form-control { border-radius: 0 8px 8px 0 !important; height: 40px; }
   .btn-update { background: #6366f1; color: #fff; border: none; font-weight: 700; padding: 12px 25px; border-radius: 8px; transition: 0.2s; }
   .btn-update:hover { background: #4f46e5; transform: translateY(-1px); }
+  
+  /* FIX FOR KSH FITTING */
+  .input-group-addon { 
+    border-radius: 8px 0 0 8px !important; 
+    font-weight: 600; 
+    background: #f1f5f9; 
+    min-width: 35px; /* Gives enough space for Ksh. */
+    text-align: center;
+  }
+  .input-group { display: flex; width: 100%; }
 </style>
 
 <div class="container-fluid">
@@ -82,7 +92,7 @@
                 <div class="form-group">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-tag"></i></span>
-                    <input type="text" class="form-control" name="product-title" value="<?php echo remove_junk($product['name']);?>">
+                    <input type="text" class="form-control" style="border-radius: 0 8px 8px 0 !important;" name="product-title" value="<?php echo remove_junk($product['name']);?>">
                   </div>
                 </div>
 
@@ -91,7 +101,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label>Category</label>
-                      <select class="form-control" name="product-categorie">
+                      <select class="form-control" style="border-radius:8px !important;" name="product-categorie">
                         <?php foreach ($all_categories as $cat): ?>
                           <option value="<?php echo (int)$cat['id']; ?>" <?php if($product['categorie_id'] === $cat['id']) echo "selected"; ?>>
                             <?php echo remove_junk($cat['name']); ?>
@@ -103,7 +113,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label>Warehouse Bin</label>
-                      <select class="form-control" name="product-location">
+                      <select class="form-control" style="border-radius:8px !important;" name="product-location">
                         <?php foreach ($all_locations as $loc): ?>
                           <option value="<?php echo (int)$loc['id']; ?>" <?php if($product['location_id'] === $loc['id']) echo "selected"; ?>>
                             <?php echo remove_junk($loc['location_name']); ?>
@@ -115,7 +125,7 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label>Attached Media</label>
-                      <select class="form-control" name="product-photo">
+                      <select class="form-control" style="border-radius:8px !important;" name="product-photo">
                         <option value="">No image</option>
                         <?php foreach ($all_photo as $photo): ?>
                           <option value="<?php echo (int)$photo['id'];?>" <?php if($product['media_id'] === $photo['id']) echo "selected"; ?>>
@@ -140,18 +150,18 @@
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Buying Price ($)</label>
+                      <label>Buying Price</label>
                       <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                        <span class="input-group-addon">Ksh.</span>
                         <input type="number" step="0.01" class="form-control" name="buying-price" value="<?php echo remove_junk($product['buy_price']);?>">
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Selling Price ($)</label>
+                      <label>Selling Price</label>
                       <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                        <span class="input-group-addon">Ksh.</span>
                         <input type="number" step="0.01" class="form-control" name="saleing-price" value="<?php echo remove_junk($product['sale_price']);?>">
                       </div>
                     </div>
@@ -167,12 +177,14 @@
                 <span class="section-tag">Current Snapshot</span>
                 <div class="preview-card">
                   <?php 
-                    // Logic to find current photo name
                     $current_img = 'no_image.jpg';
                     foreach($all_photo as $p) { if($p['id'] == $product['media_id']) $current_img = $p['file_name']; }
                   ?>
                   <img src="uploads/products/<?php echo $current_img; ?>" class="preview-img" alt="Current Product Image">
                   <div style="font-weight:700; color:#334155;"><?php echo $product['name']; ?></div>
+                  <div style="font-size: 14px; color: #6366f1; font-weight: bold; margin-top: 5px;">
+                    Price: Ksh. <?php echo number_format($product['sale_price'], 2); ?>
+                  </div>
                   <div class="text-muted" style="font-size:12px; margin-top:5px;">
                     Last Updated: <?php echo read_date($product['date']); ?>
                   </div>

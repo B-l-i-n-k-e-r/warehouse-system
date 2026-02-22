@@ -2,7 +2,20 @@
   $page_title = 'All categories';
   require_once('includes/load.php');
   page_require_level(1);
-  $all_categories = find_all('categories')
+
+  // --- Pagination Logic ---
+  $limit = 10; // Number of categories per page
+  $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+  if($page < 1) $page = 1;
+  $offset = ($page - 1) * $limit;
+
+  // Get total count for pagination buttons
+  $total_count = count_by_id('categories');
+  $total_records = (int)$total_count['total'];
+  $total_pages = ceil($total_records / $limit);
+
+  // Custom query to fetch only the 10 records for this page
+  $all_categories = find_by_sql("SELECT * FROM categories ORDER BY name ASC LIMIT {$limit} OFFSET {$offset}");
 ?>
 <?php
  if(isset($_POST['add_cat'])){
@@ -55,10 +68,6 @@
     box-shadow: none;
     transition: all 0.2s;
   }
-  .form-modern .form-control:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-  }
   .btn-modern {
     border-radius: 8px;
     padding: 10px 20px;
@@ -71,24 +80,17 @@
     color: #fff;
     width: 100%;
   }
-  .btn-modern-primary:hover {
-    background: #4f46e5;
-    transform: translateY(-1px);
-  }
-  .table-cat { margin: 0; }
   .table-cat thead th {
     background: #f8fafc;
     text-transform: uppercase;
     font-size: 11px;
     letter-spacing: 0.05em;
     color: #64748b;
-    border-top: none !important;
     padding: 15px 20px !important;
   }
   .table-cat tbody td {
     padding: 15px 20px !important;
     vertical-align: middle !important;
-    border-top: 1px solid #f1f5f9 !important;
   }
   .action-icon {
     width: 32px;
@@ -97,11 +99,35 @@
     display: inline-block;
     border-radius: 6px;
     text-align: center;
-    transition: all 0.2s;
   }
   .action-edit { background: #fff7ed; color: #f97316; }
   .action-delete { background: #fef2f2; color: #ef4444; }
-  .action-icon:hover { transform: scale(1.1); }
+
+  /* --- Pagination Styling --- */
+  .pagination-wrapper {
+    padding: 20px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-pagination {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-pagination:hover:not(:disabled) {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+  .btn-pagination:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 </style>
 
 <div class="container-fluid">
@@ -145,9 +171,12 @@
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($all_categories as $cat):?>
+                <?php 
+                  $count = $offset + 1; // Adjust index based on page
+                  foreach ($all_categories as $cat):
+                ?>
                   <tr>
-                    <td class="text-center text-muted"><?php echo count_id();?></td>
+                    <td class="text-center text-muted"><?php echo $count++; ?></td>
                     <td style="font-weight: 600; color: #1e293b;">
                       <?php echo remove_junk(ucfirst($cat['name'])); ?>
                     </td>
@@ -166,6 +195,26 @@
               </tbody>
             </table>
           </div>
+
+          <div class="pagination-wrapper">
+            <div class="text-muted small">
+              Page <strong><?php echo $page; ?></strong> of <strong><?php echo $total_pages; ?></strong>
+            </div>
+            <div class="btn-group">
+              <a href="?page=<?php echo $page - 1; ?>" 
+                 class="btn btn-pagination" 
+                 <?php if($page <= 1) echo 'style="pointer-events: none; opacity: 0.5;"'; ?>>
+                <i class="glyphicon glyphicon-chevron-left"></i> Previous
+              </a>
+              <a href="?page=<?php echo $page + 1; ?>" 
+                 class="btn btn-pagination" 
+                 style="margin-left: 5px;"
+                 <?php if($page >= $total_pages) echo 'style="pointer-events: none; opacity: 0.5;"'; ?>>
+                Next <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

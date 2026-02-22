@@ -1,4 +1,7 @@
 <?php
+// Set the correct timezone for Kenya
+date_default_timezone_set('Africa/Nairobi');
+
 $page_title = 'Sales Report';
 require_once('includes/load.php');
 page_require_level(3);
@@ -42,152 +45,197 @@ if (isset($_POST['submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Report | <?php echo $start_date; ?> to <?php echo $end_date; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --primary: #6366f1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --slate-800: #1e293b;
+        }
         body {
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             font-family: 'Inter', sans-serif;
-            color: #334155;
-            padding-top: 50px;
-            padding-bottom: 50px;
+            color: var(--slate-800);
+            padding: 40px 20px;
+        }
+        .report-container {
+            max-width: 1140px;
+            margin: auto;
         }
         .report-card {
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
             padding: 40px;
-            max-width: 1100px;
-            margin: auto;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
         .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
             border-bottom: 2px solid #f1f5f9;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            text-align: center;
+            padding-bottom: 30px;
         }
-        .report-header h1 {
-            font-weight: 700;
-            color: #1e293b;
-            letter-spacing: -0.025em;
+        .company-logo {
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -1px;
+            color: var(--primary);
         }
-        .date-badge {
-            background: #e2e8f0;
-            color: #475569;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-weight: 500;
-            font-size: 0.9rem;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
         }
-        .table {
-            border-collapse: separate;
-            border-spacing: 0;
+        .summary-item {
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            background: #f8fafc;
+        }
+        .summary-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #64748b;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .summary-value {
+            font-size: 26px;
+            font-weight: 800;
+            display: block;
         }
         .table thead th {
             background-color: #f8fafc;
             border-bottom: 2px solid #e2e8f0;
             color: #64748b;
-            font-size: 0.75rem;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             padding: 15px;
         }
         .table tbody td {
-            padding: 15px;
+            padding: 18px 15px;
             border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
         }
-        .table-hover tbody tr:hover {
-            background-color: #f1f5f9;
-        }
-        .profit-text {
-            color: #10b981;
+        .badge-location {
+            background: #eef2ff;
+            color: #4338ca;
+            font-size: 11px;
             font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
         }
-        .grand-total-row {
-            background-color: #f8fafc;
-            font-weight: 600;
-        }
+        .profit-pos { color: var(--success); }
+        .profit-neg { color: var(--danger); }
+        
         @media print {
             body { background: white; padding: 0; }
-            .report-card { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+            .report-card { border: none; box-shadow: none; padding: 0; }
             .no-print { display: none; }
+            .summary-item { border: 1px solid #eee; background: white !important; }
         }
     </style>
 </head>
 <body>
 
-<?php if($results): ?>
-    <div class="report-card">
-        <header class="report-header">
-            <h1>Inventory Sales Report</h1>
-            <div class="mt-3">
-                <span class="date-badge">
-                    <?php echo $start_date; ?> &mdash; <?php echo $end_date; ?>
-                </span>
-            </div>
-            <?php if(!empty($location_id)): ?>
-                <div class="mt-2">
-                    <small class="text-muted text-uppercase tracking-wider">Location:</small>
-                    <span class="badge bg-primary rounded-pill"><?php echo remove_junk($results[0]['location_name']); ?></span>
+<?php if($results): 
+    $grand_total = 0;
+    $total_cost = 0;
+    foreach($results as $r) {
+        $grand_total += $r['total_saleing_price'];
+        $total_cost += $r['total_buying_price'];
+    }
+    $total_profit = $grand_total - $total_cost;
+?>
+    <div class="report-container">
+        <div class="report-card">
+            <header class="report-header">
+                <div>
+                    <div class="company-logo">MOONLIT <span style="color:#94a3b8">LOGISTICS</span></div>
+                    <h1 class="h4 fw-bold mt-2">Sales Analysis Report</h1>
+                    <p class="text-muted small mb-0">
+                        Generated on: <strong><?php echo date("d M Y"); ?></strong> at <strong><?php echo date("h:i A"); ?></strong>
+                    </p>
                 </div>
-            <?php endif; ?>
-        </header>
+                <div class="text-end">
+                    <span class="badge bg-dark rounded-pill px-3 py-2">
+                        Date: <?php echo date("d/m/y", strtotime($start_date)); ?> - <?php echo date("d/m/y", strtotime($end_date)); ?>
+                    </span>
+                    <?php if(!empty($location_id)): ?>
+                        <div class="mt-2 small fw-bold text-uppercase text-primary">
+                            Site: <?php echo remove_junk($results[0]['location_name']); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </header>
 
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Product Title</th>
-                        <th>Location</th>
-                        <th class="text-end">Buying</th>
-                        <th class="text-end">Selling</th>
-                        <th class="text-center">Qty</th>
-                        <th class="text-end">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                        $grand_total = 0;
-                        $total_profit = 0;
-                        foreach($results as $result): 
-                            $grand_total += $result['total_saleing_price'];
-                            $total_profit += ($result['total_saleing_price'] - $result['total_buying_price']);
-                    ?>
-                    <tr>
-                        <td class="text-muted"><?php echo remove_junk($result['date']);?></td>
-                        <td><strong><?php echo remove_junk(ucfirst($result['name']));?></strong></td>
-                        <td><span class="text-secondary"><?php echo remove_junk($result['location_name']);?></span></td>
-                        <td class="text-end">$<?php echo number_format($result['buy_price'], 2);?></td>
-                        <td class="text-end">$<?php echo number_format($result['sale_price'], 2);?></td>
-                        <td class="text-center"><?php echo (int)$result['qty'];?></td>
-                        <td class="text-end"><strong>$<?php echo number_format($result['total_saleing_price'], 2);?></strong></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-                <tfoot>
-                    <tr class="grand-total-row">
-                        <td colspan="5" class="border-0"></td>
-                        <td class="text-end border-0">Grand Total</td>
-                        <td class="text-end border-0 text-primary">$<?php echo number_format($grand_total, 2);?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="border-0"></td>
-                        <td class="text-end border-0">Total Profit</td>
-                        <td class="text-end border-0 profit-text">$<?php echo number_format($total_profit, 2);?></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Total Revenue</span>
+                    <span class="summary-value text-dark">Ksh <?php echo number_format($grand_total, 2); ?></span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Buying Cost</span>
+                    <span class="summary-value text-muted">Ksh <?php echo number_format($total_cost, 2); ?></span>
+                </div>
+                <div class="summary-item" style="background: #ecfdf5; border-color: #a7f3d0;">
+                    <span class="summary-label" style="color: #059669;">Net Profit</span>
+                    <span class="summary-value" style="color: #059669;">Ksh <?php echo number_format($total_profit, 2); ?></span>
+                </div>
+            </div>
 
-        <div class="mt-5 d-flex justify-content-end no-print">
-            <button class="btn btn-outline-secondary me-2" onclick="window.print()">
-                Export PDF
-            </button>
-            <button class="btn btn-primary px-4" onclick="window.print()">
-                Print Report
-            </button>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Product Description</th>
+                            <th>Location</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Total Sale</th>
+                            <th class="text-end">Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($results as $result): 
+                            $profit = $result['total_saleing_price'] - $result['total_buying_price'];
+                        ?>
+                        <tr>
+                            <td class="text-muted small"><?php echo date("d/m/y", strtotime($result['date']));?></td>
+                            <td>
+                                <div class="fw-bold"><?php echo remove_junk(ucfirst($result['name']));?></div>
+                            </td>
+                            <td><span class="badge-location"><?php echo remove_junk($result['location_name']);?></span></td>
+                            <td class="text-end text-muted small">Ksh <?php echo number_format($result['sale_price'], 2);?></td>
+                            <td class="text-center fw-bold"><?php echo (int)$result['qty'];?></td>
+                            <td class="text-end fw-bold">Ksh <?php echo number_format($result['total_saleing_price'], 2);?></td>
+                            <td class="text-end fw-bold <?php echo ($profit >= 0) ? 'profit-pos' : 'profit-neg'; ?>">
+                                Ksh <?php echo number_format($profit, 2);?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-5 d-flex justify-content-between align-items-center no-print">
+                
+                <div>
+                    <button class="btn btn-light border px-4 me-2" onclick="window.print()">
+                        Export PDF
+                    </button>
+                    <button class="btn btn-primary px-4 fw-bold" onclick="window.print()">
+                        Print Report
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 <?php 

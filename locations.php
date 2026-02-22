@@ -2,7 +2,21 @@
   $page_title = 'All Warehouse Locations';
   require_once('includes/load.php');
   page_require_level(1);
-  $locations = find_all_locations();
+
+  // --- Pagination Logic ---
+  $limit = 10; 
+  $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+  if($page < 1) $page = 1;
+  $offset = ($page - 1) * $limit;
+
+  // Get total count for pagination
+  $total_res = $db->query("SELECT COUNT(id) as total FROM locations");
+  $total_count = $db->fetch_assoc($total_res);
+  $total_records = (int)$total_count['total'];
+  $total_pages = ceil($total_records / $limit);
+
+  // Fetch only 10 locations for the current page
+  $locations = find_by_sql("SELECT * FROM locations ORDER BY location_name ASC LIMIT {$limit} OFFSET {$offset}");
 ?>
 <?php include_once('layouts/header.php'); ?>
 
@@ -13,6 +27,7 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     border: none;
     overflow: hidden;
+    margin-bottom: 30px;
   }
   .card-header-flex {
     padding: 20px 25px;
@@ -39,7 +54,6 @@
   }
   .btn-modern-add:hover { background: #4338ca; color: #fff; transform: translateY(-1px); }
   
-  .table-modern { margin-bottom: 0; }
   .table-modern thead th {
     background: #f8fafc;
     color: #64748b;
@@ -47,13 +61,6 @@
     font-size: 11px;
     letter-spacing: 0.05em;
     padding: 15px 20px !important;
-    border-bottom: 1px solid #edf2f7 !important;
-    border-top: none !important;
-  }
-  .table-modern tbody td {
-    padding: 15px 20px !important;
-    vertical-align: middle !important;
-    border-top: 1px solid #f1f5f9 !important;
   }
   .bin-code {
     font-family: 'Monaco', 'Consolas', monospace;
@@ -61,7 +68,6 @@
     padding: 2px 6px;
     border-radius: 4px;
     color: #475569;
-    font-size: 13px;
   }
   .zone-badge {
     color: #6366f1;
@@ -87,10 +93,39 @@
     display: inline-block;
     border-radius: 8px;
     text-align: center;
-    transition: all 0.2s;
   }
   .btn-action-edit { background: #fff7ed; color: #f97316; }
   .btn-action-delete { background: #fef2f2; color: #ef4444; }
+
+  /* --- Pagination Styles --- */
+  .pagination-wrapper {
+    padding: 20px 25px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+  }
+  .btn-pagination {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-pagination:hover:not(.disabled) {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+  }
+  .btn-pagination.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 </style>
 
 <div class="container-fluid">
@@ -126,9 +161,12 @@
                 </tr>
               </thead>
               <tbody>
-                <?php foreach($locations as $loc): ?>
+                <?php 
+                $count = $offset + 1;
+                foreach($locations as $loc): 
+                ?>
                   <tr>
-                    <td class="text-center text-muted"><?php echo count_id();?></td>
+                    <td class="text-center text-muted"><?php echo $count++; ?></td>
                     <td>
                       <span class="bin-code"><?php echo remove_junk(ucfirst($loc['location_name'])); ?></span>
                     </td>
@@ -162,14 +200,31 @@
                   <tr>
                     <td colspan="5" class="text-center" style="padding: 40px !important;">
                       <i class="glyphicon glyphicon-info-sign" style="font-size: 30px; color: #cbd5e1; display: block; margin-bottom: 10px;"></i>
-                      <p class="text-muted">No warehouse locations defined yet.</p>
-                      <a href="add_location.php" class="btn btn-sm btn-default">Create First Bin</a>
+                      <p class="text-muted">No warehouse locations found on this page.</p>
                     </td>
                   </tr>
                 <?php endif; ?>
               </tbody>
             </table>
           </div>
+
+          <div class="pagination-wrapper">
+            <div class="text-muted small">
+              Showing <strong><?php echo min($offset + 1, $total_records); ?></strong> to <strong><?php echo min($offset + $limit, $total_records); ?></strong> of <strong><?php echo $total_records; ?></strong> Bins
+            </div>
+            <div class="btn-group">
+              <a href="?page=<?php echo $page - 1; ?>" 
+                 class="btn btn-pagination <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                <i class="glyphicon glyphicon-chevron-left"></i> Previous
+              </a>
+              <a href="?page=<?php echo $page + 1; ?>" 
+                 class="btn btn-pagination <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>" 
+                 style="margin-left: 8px;">
+                Next <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

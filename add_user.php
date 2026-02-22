@@ -145,13 +145,13 @@
             <div class="col-md-6">
               <div class="input-group-modern">
                 <label for="name">Full Name</label>
-                <input type="text" class="form-control-modern" name="full-name" placeholder="e.g. John Doe">
+                <input type="text" class="form-control-modern" name="full-name" placeholder="e.g. Mariba">
               </div>
             </div>
             <div class="col-md-6">
               <div class="input-group-modern">
                 <label for="username">Username</label>
-                <input type="text" class="form-control-modern" name="username" placeholder="johndoe88">
+                <input type="text" class="form-control-modern" name="username" placeholder="blinker09">
               </div>
             </div>
           </div>

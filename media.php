@@ -2,7 +2,21 @@
   $page_title = 'All Image';
   require_once('includes/load.php');
   page_require_level(2);
-  $media_files = find_all('media');
+
+  // --- Pagination Logic ---
+  $limit = 10; 
+  $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+  if($page < 1) $page = 1;
+  $offset = ($page - 1) * $limit;
+
+  // Get total media count
+  $total_res = $db->query("SELECT COUNT(id) as total FROM media");
+  $total_count = $db->fetch_assoc($total_res);
+  $total_records = (int)$total_count['total'];
+  $total_pages = ceil($total_records / $limit);
+
+  // Fetch only 10 images for the current page
+  $media_files = find_by_sql("SELECT * FROM media ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}");
 
   if(isset($_POST['submit'])) {
     $photo = new Media();
@@ -25,12 +39,12 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     border: none;
     margin-bottom: 30px;
+    overflow: hidden;
   }
   .media-header {
     padding: 20px 25px;
     background: #fff;
     border-bottom: 1px solid #f1f5f9;
-    border-radius: 12px 12px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -56,12 +70,6 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 15px !important;
-    border: none !important;
-  }
-  .table-media tbody td {
-    padding: 15px !important;
-    vertical-align: middle !important;
-    border-top: 1px solid #f1f5f9 !important;
   }
   .img-preview {
     width: 60px;
@@ -70,27 +78,44 @@
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: transform 0.2s;
-    cursor: zoom-in;
   }
-  .img-preview:hover {
-    transform: scale(1.1);
-  }
+  .img-preview:hover { transform: scale(1.1); }
+  
   .file-type-badge {
     padding: 4px 8px;
     border-radius: 6px;
     font-size: 10px;
     font-weight: 700;
-    text-transform: uppercase;
     background: #e2e8f0;
     color: #475569;
   }
-  .btn-media-action {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    padding: 0;
+
+  /* --- Pagination Styles --- */
+  .pagination-wrapper {
+    padding: 20px 25px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+  }
+  .btn-pagination {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 8px 16px;
     border-radius: 8px;
-    margin: 0 2px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-pagination:hover:not(.disabled) {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+  .btn-pagination.disabled {
+    opacity: 0.5;
+    pointer-events: none;
   }
 </style>
 
@@ -132,9 +157,12 @@
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($media_files as $media_file): ?>
+                <?php 
+                $count = $offset + 1;
+                foreach ($media_files as $media_file): 
+                ?>
                 <tr>
-                  <td class="text-center text-muted"><?php echo count_id();?></td>
+                  <td class="text-center text-muted"><?php echo $count++; ?></td>
                   <td class="text-center">
                     <img src="uploads/products/<?php echo $media_file['file_name'];?>" class="img-preview" alt="product image"/>
                   </td>
@@ -143,16 +171,11 @@
                     <small class="text-muted">ID: <?php echo (int)$media_file['id'];?></small>
                   </td>
                   <td class="text-center">
-                    <span class="file-type-badge">
-                      <?php echo $media_file['file_type'];?>
-                    </span>
+                    <span class="file-type-badge"><?php echo $media_file['file_type'];?></span>
                   </td>
                   <td class="text-center">
                     <div class="btn-group">
-                      <a href="edit_media.php?id=<?php echo (int) $media_file['id'];?>" class="btn btn-info btn-media-action" title="Edit" data-toggle="tooltip">
-                        <i class="glyphicon glyphicon-pencil"></i>
-                      </a>
-                      <a href="delete_media.php?id=<?php echo (int) $media_file['id'];?>" class="btn btn-danger btn-media-action" title="Delete" data-toggle="tooltip" onclick="return confirm('Permanently delete this image?')">
+                      <a href="delete_media.php?id=<?php echo (int) $media_file['id'];?>" class="btn btn-danger btn-xs" title="Delete" data-toggle="tooltip" onclick="return confirm('Permanently delete this image?')">
                         <i class="glyphicon glyphicon-trash"></i>
                       </a>
                     </div>
@@ -164,13 +187,31 @@
                 <tr>
                   <td colspan="5" class="text-center" style="padding: 50px !important;">
                     <i class="glyphicon glyphicon-picture" style="font-size: 40px; color: #e2e8f0;"></i>
-                    <p class="text-muted" style="margin-top: 10px;">Your media library is empty.</p>
+                    <p class="text-muted" style="margin-top: 10px;">No media assets found on this page.</p>
                   </td>
                 </tr>
                 <?php endif; ?>
               </tbody>
             </table>
           </div>
+
+          <div class="pagination-wrapper">
+            <div class="text-muted small">
+              Page <strong><?php echo $page; ?></strong> of <strong><?php echo $total_pages; ?></strong> (Total: <?php echo $total_records; ?> assets)
+            </div>
+            <div class="btn-group">
+              <a href="?page=<?php echo $page - 1; ?>" 
+                 class="btn btn-pagination <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                <i class="glyphicon glyphicon-chevron-left"></i> Previous
+              </a>
+              <a href="?page=<?php echo $page + 1; ?>" 
+                 class="btn btn-pagination <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>" 
+                 style="margin-left: 8px;">
+                Next <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

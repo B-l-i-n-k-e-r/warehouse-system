@@ -1,4 +1,9 @@
 <?php
+    error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+
+  $page_title = 'Home Page';
+  require_once('includes/load.php');
   $page_title = 'Home Page';
   require_once('includes/load.php');
   if (!$session->isUserLoggedIn(true)) { redirect('index.php', false);}

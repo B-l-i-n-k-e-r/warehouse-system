@@ -2,74 +2,60 @@
   $page_title = 'All sale';
   require_once('includes/load.php');
   page_require_level(3);
-?>
-<?php
- $sales = find_all_sale();
- $locations = find_all_locations(); 
+
+  // 1. Set Timezone to Africa/Nairobi
+  date_default_timezone_set('Africa/Nairobi');
+
+  // 2. Pagination Logic
+  $limit = 10; 
+  $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+  if($page < 1) $page = 1;
+  $offset = ($page - 1) * $limit;
+
+  $all_sales = find_all_sale();
+  $total_sales = count($all_sales);
+  $total_pages = ceil($total_sales / $limit);
+
+  // Slice results for pagination
+  $sales = array_slice($all_sales, $offset, $limit);
+  $locations = find_all_locations(); 
 ?>
 <?php include_once('layouts/header.php'); ?>
 
 <style>
-  .sales-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    border: none;
-    margin-bottom: 30px;
-  }
-  .sales-header {
-    padding: 20px 25px;
-    border-bottom: 1px solid #f1f5f9;
+  /* Existing Styles */
+  .sales-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: none; margin-bottom: 30px; }
+  .sales-header { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+  .sales-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: #1e293b; }
+  .table-sales thead th { background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding: 15px !important; border: none !important; }
+  .table-sales tbody td { padding: 15px !important; vertical-align: middle !important; border-top: 1px solid #f1f5f9 !important; }
+  .loc-badge { background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .price-text { font-weight: 700; color: #0f172a; }
+  .date-text { color: #94a3b8; font-size: 12px; }
+  .btn-sale-action { width: 30px; height: 30px; line-height: 30px; padding: 0; border-radius: 6px; margin: 0 2px; }
+
+  /* Pagination Styles */
+  .pagination-container {
+    padding: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    border-top: 1px solid #f1f5f9;
   }
-  .sales-header h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: #1e293b;
-  }
-  .table-sales thead th {
-    background: #f8fafc;
-    color: #64748b;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 15px !important;
-    border: none !important;
-  }
-  .table-sales tbody td {
-    padding: 15px !important;
-    vertical-align: middle !important;
-    border-top: 1px solid #f1f5f9 !important;
-  }
-  .loc-badge {
-    background: #e0f2fe;
-    color: #0369a1;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
+  .btn-pagination {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 8px;
+    color: #6366f1;
     font-weight: 600;
+    transition: all 0.2s;
+    margin: 0 5px;
+    text-decoration: none;
   }
-  .price-text {
-    font-weight: 700;
-    color: #0f172a;
-  }
-  .date-text {
-    color: #94a3b8;
-    font-size: 12px;
-  }
-  .btn-sale-action {
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    padding: 0;
-    border-radius: 6px;
-    margin: 0 2px;
-  }
+  .btn-pagination:hover:not(.disabled) { background: #f8fafc; border-color: #6366f1; }
+  .btn-pagination.disabled { color: #cbd5e1; cursor: not-allowed; pointer-events: none; }
+  .page-info { color: #64748b; font-size: 13px; margin: 0 15px; }
 </style>
 
 <div class="container-fluid">
@@ -119,9 +105,9 @@
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($sales as $sale):?>
+                <?php foreach ($sales as $index => $sale):?>
                 <tr>
-                  <td class="text-center text-muted"><?php echo count_id();?></td>
+                  <td class="text-center text-muted"><?php echo $offset + ($index + 1);?></td>
                   <td>
                     <div style="font-weight: 600; color: #334155;"><?php echo remove_junk($sale['name']); ?></div>
                   </td>
@@ -133,7 +119,7 @@
                   </td>
                   <td class="text-center" style="font-weight: 600;"><?php echo (int)$sale['qty']; ?></td>
                   <td class="text-center price-text">
-                    $<?php echo number_format((float)$sale['price'], 2); ?>
+                    Ksh <?php echo number_format((float)$sale['price'], 2); ?>
                   </td>
                   <td class="text-center date-text">
                     <?php echo read_date($sale['date']); ?>
@@ -156,6 +142,19 @@
               </tbody>
             </table>
           </div>
+
+          <div class="pagination-container">
+            <a href="?page=<?php echo $page - 1; ?>" class="btn-pagination <?php if($page <= 1) echo 'disabled'; ?>">
+              <i class="glyphicon glyphicon-chevron-left"></i> Previous
+            </a>
+            
+            <span class="page-info">Page <b><?php echo $page; ?></b> of <b><?php echo $total_pages; ?></b></span>
+
+            <a href="?page=<?php echo $page + 1; ?>" class="btn-pagination <?php if($page >= $total_pages) echo 'disabled'; ?>">
+              Next <i class="glyphicon glyphicon-chevron-right"></i>
+            </a>
+          </div>
+
         </div>
       </div>
     </div>

@@ -2,16 +2,21 @@
   $page_title = 'All User';
   require_once('includes/load.php');
   page_require_level(1);
+ date_default_timezone_set('Africa/Nairobi');
+  $current_time = date("d M Y, h:i A");
 
+  // We define the SQL query manually to ensure 'u.image' is selected from the database
+  $sql  = "SELECT u.id, u.name, u.username, u.user_level, u.status, u.last_login, u.image, g.group_name ";
+  $sql .= "FROM users u ";
+  $sql .= "LEFT JOIN user_groups g ON g.group_level = u.user_level ";
+  
   if(isset($_GET['status']) && $_GET['status'] == '0'){
-      $all_users = find_by_sql("SELECT u.id, u.name, u.username, u.user_level, u.status, u.last_login, g.group_name 
-                               FROM users u 
-                               LEFT JOIN user_groups g ON g.group_level = u.user_level 
-                               WHERE u.status='0' 
-                               ORDER BY u.name ASC");
-  } else {
-      $all_users = find_all_user();
+      $sql .= "WHERE u.status='0' ";
   }
+  
+  $sql .= "ORDER BY u.name ASC";
+  
+  $all_users = find_by_sql($sql);
 ?>
 <?php include_once('layouts/header.php'); ?>
 
@@ -83,6 +88,15 @@
     border-radius: 6px;
     margin: 0 2px;
   }
+  /* Updated Avatar Styling */
+  .user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eeeff2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
 </style>
 
 <div class="container-fluid">
@@ -121,6 +135,7 @@
               <thead>
                 <tr>
                   <th class="text-center" style="width: 50px;">#</th>
+                  <th class="text-center" style="width: 70px;">Photo</th>
                   <th>User Details</th>
                   <th class="text-center">Role</th>
                   <th class="text-center">Status</th>
@@ -132,6 +147,13 @@
               <?php foreach($all_users as $a_user): ?>
                 <tr>
                   <td class="text-center text-muted"><?php echo count_id();?></td>
+                  <td class="text-center">
+                    <?php if($a_user['image'] === 'no_image.jpg' || empty($a_user['image'])): ?>
+                      <img class="user-avatar" src="uploads/users/no_image.jpg" alt="Default Image">
+                    <?php else: ?>
+                      <img class="user-avatar" src="uploads/users/<?php echo $a_user['image'];?>" alt="User Image">
+                    <?php endif; ?>
+                  </td>
                   <td>
                     <div style="font-weight:600; color:#334155;"><?php echo remove_junk(ucwords($a_user['name']))?></div>
                     <div class="user-meta">@<?php echo remove_junk($a_user['username'])?></div>

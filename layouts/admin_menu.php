@@ -4,7 +4,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    background-color: #1a1d21; /* Deep charcoal */
+    background-color: #1a1d21;
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
@@ -21,20 +21,40 @@
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
-    position: relative;
+    position: relative; /* Essential for absolute positioning of badges */
   }
 
   .sidebar-menu li a i.glyphicon {
     margin-right: 15px;
     font-size: 16px;
-    color: #3498db; /* Electric Blue Icons */
+    color: #3498db;
   }
 
-  /* Hover Effect */
+  /* Fixed Badge Styling - Matches your screenshot */
+  .notif-badge {
+    background-color: #e74c3c !important;
+    color: white !important;
+    font-size: 10px !important;
+    padding: 2px 7px !important;
+    border-radius: 10px !important;
+    font-weight: bold !important;
+    position: absolute !important;
+    right: 40px; /* Positions it to the left of the arrow */
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+    z-index: 10;
+  }
+
+  /* Adjust badge position for submenus */
+  .submenu .notif-badge {
+    right: 15px;
+  }
+
   .sidebar-menu li a:hover {
     background-color: #252a30;
     color: #ffffff;
-    padding-left: 30px; /* Slight slide effect */
+    padding-left: 30px;
   }
 
   .sidebar-menu li a:hover::before {
@@ -49,7 +69,7 @@
 
   /* Submenu Styling */
   .submenu {
-    display: none; /* Hidden by default */
+    display: none;
     background-color: #111417;
     list-style: none;
     padding: 0;
@@ -71,7 +91,6 @@
     padding-left: 60px;
   }
 
-  /* Arrow Indicator */
   .arrow {
     float: right;
     font-size: 10px !important;
@@ -96,11 +115,21 @@
     <a href="#" class="submenu-toggle">
       <i class="glyphicon glyphicon-user"></i>
       <span>User Management</span>
+      <?php if(isset($pending_count) && $pending_count > 0): ?>
+        <span class="notif-badge"><?php echo (int)$pending_count; ?></span>
+      <?php endif; ?>
       <i class="glyphicon glyphicon-menu-right arrow"></i>
     </a>
     <ul class="nav submenu">
       <li><a href="group.php">Manage Groups</a></li>
-      <li><a href="users.php">Manage Users</a></li>
+      <li>
+        <a href="users.php">
+          <span>Manage Users</span>
+          <?php if(isset($pending_count) && $pending_count > 0): ?>
+            <span class="notif-badge"><?php echo (int)$pending_count; ?></span>
+          <?php endif; ?>
+        </a>
+      </li>
     </ul>
   </li>
 
@@ -127,10 +156,20 @@
     <a href="#" class="submenu-toggle">
       <i class="glyphicon glyphicon-th-large"></i>
       <span>Products</span>
+      <?php if(isset($low_stock_count) && $low_stock_count > 0): ?>
+        <span class="notif-badge"><?php echo (int)$low_stock_count; ?></span>
+      <?php endif; ?>
       <i class="glyphicon glyphicon-menu-right arrow"></i>
     </a>
     <ul class="nav submenu">
-      <li><a href="product.php">Manage products</a></li>
+      <li>
+        <a href="product.php">
+          <span>Manage products</span>
+          <?php if(isset($low_stock_count) && $low_stock_count > 0): ?>
+            <span class="notif-badge"><?php echo (int)$low_stock_count; ?></span>
+          <?php endif; ?>
+        </a>
+      </li>
       <li><a href="add_product.php">Add product</a></li>
     </ul>
   </li>
@@ -169,14 +208,13 @@
 </ul>
 
 <script>
-  // Simple Toggle Script for Smooth Submenus
   document.querySelectorAll('.submenu-toggle').forEach(item => {
     item.addEventListener('click', event => {
       event.preventDefault();
       const submenu = item.nextElementSibling;
       const isActive = item.classList.contains('active');
       
-      // Close other open submenus
+      // Close other submenus for a cleaner accordion effect
       document.querySelectorAll('.submenu').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.submenu-toggle').forEach(el => el.classList.remove('active'));
 

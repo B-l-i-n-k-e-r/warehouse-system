@@ -22,163 +22,244 @@
 <head>
     <meta charset="UTF-8">
     <title>Pick List #<?php echo $sale_data['id']; ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Libre+Barcode+128&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            padding: 40px; 
-            color: #333;
-            line-height: 1.6;
+        :root {
+            --primary-color: #1a1d21;
+            --accent-color: #4f46e5;
+            --border-color: #e2e8f0;
         }
-        .header-table { width: 100%; border-bottom: 3px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        .title { font-size: 24px; font-weight: 900; letter-spacing: 1px; }
-        .order-ref { font-size: 16px; color: #666; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            padding: 20px; 
+            color: var(--primary-color);
+            line-height: 1.4;
+            background-color: #f1f5f9;
+        }
+        .paper {
+            background: #fff;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            border-top: 8px solid var(--accent-color);
+        }
         
-        .instruction-alert {
-            background: #f8f9fa;
-            border: 1px dashed #ccc;
-            padding: 15px;
-            margin-bottom: 30px;
-            font-size: 13px;
+        /* Barcode Simulation */
+        .barcode {
+            font-family: 'Libre Barcode 128', cursive;
+            font-size: 45px;
+            margin-top: -10px;
         }
 
-        .pick-table { width: 100%; border-collapse: collapse; }
+        .header-flex { 
+            display: flex; 
+            justify-content: space-between; 
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .title-area h1 { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -1px; }
+        .title-area p { margin: 5px 0 0 0; color: #64748b; font-weight: 600; }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .meta-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .meta-label { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; margin-bottom: 5px; display: block; }
+        .meta-value { font-size: 14px; font-weight: 700; }
+
+        .instruction-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            font-size: 12px;
+            color: #92400e;
+        }
+
+        .pick-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
         .pick-table th { 
-            background: #333; 
-            color: #fff; 
-            text-transform: uppercase; 
-            font-size: 12px; 
-            padding: 12px;
             text-align: left;
+            padding: 15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--primary-color);
         }
         .pick-table td { 
-            border: 1px solid #eee; 
-            padding: 20px 12px; 
+            padding: 25px 15px;
+            border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
         }
 
-        .location-tag {
-            background: #000;
+        .location-box {
+            background: var(--primary-color);
             color: #fff;
-            padding: 8px 12px;
-            display: inline-block;
-            font-size: 20px;
-            font-weight: 800;
-            border-radius: 4px;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
         }
-        .zone-label {
-            display: block;
-            font-size: 10px;
-            color: #d1d5db;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-        }
-        
-        .qty-circle {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #333;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
+        .loc-zone { font-size: 10px; opacity: 0.7; display: block; margin-bottom: 2px; }
+        .loc-name { font-size: 22px; font-weight: 900; display: block; }
+
+        .qty-box {
+            font-size: 36px;
             font-weight: 900;
+            text-align: center;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            border-radius: 12px;
             margin: 0 auto;
         }
 
-        .check-box {
+        .check-square {
             width: 40px;
             height: 40px;
-            border: 2px solid #333;
+            border: 3px solid #cbd5e1;
+            border-radius: 8px;
             margin: 0 auto;
         }
 
-        .footer { margin-top: 60px; display: flex; justify-content: space-between; }
-        .sig-line { border-top: 1px solid #333; width: 250px; text-align: center; padding-top: 5px; font-size: 12px; }
+        .footer-sig {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+        .sig-box {
+            border-top: 1px solid var(--primary-color);
+            padding-top: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+        }
 
         .btn-print {
-            background: #4f46e5;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent-color);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
+            padding: 15px 30px;
+            border-radius: 50px;
             font-weight: 700;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
             cursor: pointer;
-            float: right;
+            z-index: 100;
         }
 
         @media print {
+            body { background: white; padding: 0; }
+            .paper { box-shadow: none; max-width: 100%; padding: 0; border: none; }
             .btn-print { display: none; }
-            body { padding: 0; }
-            .location-tag { border: 1px solid #000; color: #000; background: #fff; }
-            .zone-label { color: #555; }
+            .location-box { border: 2px solid #000; color: #000; background: #fff !important; }
         }
     </style>
 </head>
 <body>
 
     <button class="btn-print" onclick="window.print()">
-        <i class="glyphicon glyphicon-print"></i> Print Picking Slip
+        Print Picking Slip
     </button>
 
-    <table class="header-table">
-        <tr>
-            <td class="title">PICKING SLIP</td>
-            <td align="right" class="order-ref">
-                <strong>REF:</strong> #SAL-<?php echo $sale_data['id']; ?><br>
-                <strong>DATE:</strong> <?php echo date("d M Y", strtotime($sale_data['date'])); ?>
-            </td>
-        </tr>
-    </table>
-
-    <div class="instruction-alert">
-        <strong>PICKER INSTRUCTION:</strong> Verify Item Name and SKU before pulling. Ensure packaging is intact. If stock is insufficient, notify the supervisor immediately.
-    </div>
-
-    <table class="pick-table">
-        <thead>
-            <tr>
-                <th>Product Information</th>
-                <th width="30%">Storage Location</th>
-                <th width="15%" style="text-align: center;">Pick Qty</th>
-                <th width="10%" style="text-align: center;">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <div style="font-size: 18px; font-weight: 700;"><?php echo remove_junk($sale_data['prod_name']); ?></div>
-                    <div style="font-size: 12px; color: #666; margin-top: 5px;">ID: <?php echo (int)$sale_data['product_id']; ?></div>
-                </td>
-                <td>
-                    <div class="location-tag">
-                        <span class="zone-label">Zone: <?php echo $sale_data['zone'] ? $sale_data['zone'] : 'N/A'; ?></span>
-                        <?php echo $sale_data['location_name'] ? strtoupper($sale_data['location_name']) : "UNASSIGNED"; ?>
-                    </div>
-                </td>
-                <td>
-                    <div class="qty-circle">
-                        <?php echo $sale_data['qty']; ?>
-                    </div>
-                </td>
-                <td>
-                    <div class="check-box"></div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="footer">
-        <div class="sig-line">
-            Warehouse Picker Signature
+    <div class="paper">
+        <div class="header-flex">
+            <div class="title-area">
+                <h1>PICKING SLIP</h1>
+                <p>MoonLit Warehouse Management System</p>
+            </div>
+            <div style="text-align: right;">
+                <div class="barcode">SAL<?php echo $sale_data['id']; ?></div>
+                <div style="font-size: 12px; font-weight: 700; margin-top: -5px;">#SAL-<?php echo $sale_data['id']; ?></div>
+            </div>
         </div>
-        <div class="sig-line">
-            Quality Assurance Check
-        </div>
-    </div>
 
-    <div style="text-align: center; margin-top: 40px; color: #ccc; font-size: 10px;">
-        End of Picking Slip #SAL-<?php echo $sale_data['id']; ?>
+        <div class="meta-grid">
+            <div class="meta-item">
+                <span class="meta-label">Order Date</span>
+                <span class="meta-value"><?php echo date("F j, Y", strtotime($sale_data['date'])); ?></span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Picked By</span>
+                <span class="meta-value">____________________</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Print Time</span>
+                <span class="meta-value"><?php echo date("H:i:s"); ?></span>
+            </div>
+        </div>
+
+        <div class="instruction-box">
+            <strong>ATTENTION PICKER:</strong> Please verify the Bin Location before picking. Scan the item to confirm SKU match. Ensure fragile items are placed at the top of the bin.
+        </div>
+
+        <table class="pick-table">
+            <thead>
+                <tr>
+                    <th>Description & Item ID</th>
+                    <th width="200" style="text-align: center;">Location</th>
+                    <th width="100" style="text-align: center;">Quantity</th>
+                    <th width="80" style="text-align: center;">Verified</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div style="font-size: 18px; font-weight: 900; margin-bottom: 5px;">
+                            <?php echo remove_junk($sale_data['prod_name']); ?>
+                        </div>
+                        <span style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #475569;">
+                            SKU-<?php echo (int)$sale_data['product_id']; ?>
+                        </span>
+                    </td>
+                    <td>
+                        <div class="location-box">
+                            <span class="loc-zone">ZONE <?php echo $sale_data['zone'] ? $sale_data['zone'] : 'N/A'; ?></span>
+                            <span class="loc-name"><?php echo $sale_data['location_name'] ? strtoupper($sale_data['location_name']) : "OFF-BIN"; ?></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="qty-box">
+                            <?php echo $sale_data['qty']; ?>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="check-square"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer-sig">
+            <div class="sig-box">
+                Authorized Picker Signature
+            </div>
+            <div class="sig-box">
+                Dispatcher / QC Signature
+            </div>
+        </div>
+
+        <div style="margin-top: 50px; text-align: center;">
+            <div class="barcode" style="font-size: 30px; opacity: 0.3;">SAL<?php echo $sale_data['id']; ?></div>
+            <p style="font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px;">
+                Internal Document - MoonLit Logistics Division
+            </p>
+        </div>
     </div>
 
 </body>
