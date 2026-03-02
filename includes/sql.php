@@ -285,4 +285,15 @@ function find_all_product_info_by_title($title){
   $sql .= "WHERE p.name ='{$db->escape($title)}' LIMIT 1";
   return find_by_sql($sql);
 }
+
+/*--------------------------------------------------------------*/
+/* Find user by username
+/*--------------------------------------------------------------*/
+function find_by_username($username) {
+  global $db;
+  $username = $db->escape($username);
+  $sql = "SELECT * FROM users WHERE username = '{$username}' LIMIT 1";
+  $result = find_by_sql($sql);
+  return !empty($result) ? array_shift($result) : false;
+}
 ?>

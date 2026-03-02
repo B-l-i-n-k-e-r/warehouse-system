@@ -73,6 +73,20 @@
     transition: all 0.3s;
   }
   .btn-add:hover { background: #4338ca; color: #fff; transform: translateY(-1px); }
+
+  /* Back Link Style from Add Group Page */
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .back-link:hover { 
+    color: #4f46e5; 
+    text-decoration: none;
+  }
 </style>
 
 <div class="container-fluid">
@@ -138,6 +152,14 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <a href="home.php" class="back-link">
+        <i class="glyphicon glyphicon-arrow-left"></i> Back to Dashboard
+      </a>
     </div>
   </div>
 </div>

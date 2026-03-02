@@ -21,7 +21,11 @@
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
-    position: relative; /* Essential for absolute positioning of badges */
+    position: relative;
+    /* Custom Instruction: Columns fit content */
+    white-space: nowrap;
+    width: fit-content;
+    min-width: 100%;
   }
 
   .sidebar-menu li a i.glyphicon {
@@ -30,7 +34,7 @@
     color: #3498db;
   }
 
-  /* Fixed Badge Styling - Matches your screenshot */
+  /* Fixed Badge Styling */
   .notif-badge {
     background-color: #e74c3c !important;
     color: white !important;
@@ -39,7 +43,7 @@
     border-radius: 10px !important;
     font-weight: bold !important;
     position: absolute !important;
-    right: 40px; /* Positions it to the left of the arrow */
+    right: 40px; 
     top: 50%;
     transform: translateY(-50%);
     box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
@@ -134,13 +138,6 @@
   </li>
 
   <li>
-    <a href="categorie.php">
-      <i class="glyphicon glyphicon-indent-left"></i>
-      <span>Categories</span>
-    </a>
-  </li>
-
-  <li>
     <a href="#" class="submenu-toggle">
       <i class="glyphicon glyphicon-map-marker"></i>
       <span>Warehouse Bins</span>
@@ -172,13 +169,6 @@
       </li>
       <li><a href="add_product.php">Add product</a></li>
     </ul>
-  </li>
-
-  <li>
-    <a href="media.php">
-      <i class="glyphicon glyphicon-picture"></i>
-      <span>Medias</span>
-    </a>
   </li>
 
   <li>

@@ -13,16 +13,20 @@
 
   // Update User Basic Info
   if(isset($_POST['update'])) {
-    $req_fields = array('name','username','level');
+    // Added 'email' to required fields
+    $req_fields = array('name','username','email','level');
     validate_fields($req_fields);
+    
     if(empty($errors)){
       $id       = (int)$e_user['id'];
       $name     = remove_junk($db->escape($_POST['name']));
       $username = remove_junk($db->escape($_POST['username']));
+      $email    = remove_junk($db->escape($_POST['email'])); // Capture Email
       $level    = (int)$db->escape($_POST['level']);
       $status   = remove_junk($db->escape($_POST['status']));
       
-      $sql = "UPDATE users SET name ='{$name}', username ='{$username}', user_level='{$level}', status='{$status}' WHERE id='{$db->escape($id)}'";
+      // Updated SQL query to include email
+      $sql = "UPDATE users SET name ='{$name}', username ='{$username}', email='{$email}', user_level='{$level}', status='{$status}' WHERE id='{$db->escape($id)}'";
       $result = $db->query($sql);
       
       if($result && $db->affected_rows() === 1){
@@ -69,7 +73,7 @@
 <style>
   .user-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: none; }
   .user-card-header { padding: 20px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #1e293b; }
-  .form-label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+  .form-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
   .modern-input { border-radius: 8px; border: 1px solid #e2e8f0; height: 42px; }
   .btn-action { border-radius: 8px; font-weight: 600; padding: 10px 20px; transition: 0.3s; }
   .access-guide { background: #f8fafc; border-radius: 8px; padding: 15px; margin-top: 20px; border: 1px solid #e2e8f0; }
@@ -104,6 +108,18 @@
             </div>
 
             <div class="row">
+               <div class="col-md-12">
+                 <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                      <input type="email" class="form-control modern-input" name="email" value="<?php echo remove_junk($e_user['email']); ?>" placeholder="email@example.com" required>
+                    </div>
+                 </div>
+               </div>
+            </div>
+
+            <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
                   <label class="form-label">Assigned Role</label>
@@ -129,7 +145,7 @@
 
             <div class="access-guide">
               <span class="form-label" style="margin-bottom: 5px;">Permissions Quick-Reference:</span>
-              <ul style="padding-left: 20px; font-size: 12px; color: #475569; margin:0;">
+              <ul style="padding-left: 20px; font-size: 11px; color: #475569; margin:0;">
                 <li><strong>Admin (L1):</strong> Full system access and user management.</li>
                 <li><strong>Manager (L2):</strong> Inventory edits and location management.</li>
                 <li><strong>Staff (L3):</strong> Sales processing and report printing only.</li>
@@ -154,7 +170,6 @@
             <div class="form-group">
               <label class="form-label">New Password</label>
               <input type="password" class="form-control modern-input" name="password" placeholder="Create a strong password">
-             
             </div>
             <button type="submit" name="update-pass" class="btn btn-danger btn-action pull-right">Apply New Password</button>
           </form>

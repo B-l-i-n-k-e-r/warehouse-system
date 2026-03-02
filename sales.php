@@ -6,6 +6,11 @@
   // 1. Set Timezone to Africa/Nairobi
   date_default_timezone_set('Africa/Nairobi');
 
+  // Logic to handle "No sales available" error if coming back from a failed print request
+  if(isset($_GET['error']) && $_GET['error'] == 'empty'){
+    $session->msg('d', "No sale available for the selected location.");
+  }
+
   // 2. Pagination Logic
   $limit = 10; 
   $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -27,6 +32,19 @@
   .sales-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: none; margin-bottom: 30px; }
   .sales-header { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
   .sales-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: #1e293b; }
+  
+  /* COLUMN FIT CONTENT - Force columns to fit content exactly */
+  .table-sales thead th, 
+  .table-sales tbody td { 
+    white-space: nowrap; 
+    width: 1%; 
+  }
+  /* Allow the Product Details column to expand and fill the remaining space */
+  .table-sales .prod-col { 
+    width: auto; 
+    white-space: normal; 
+  }
+
   .table-sales thead th { background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding: 15px !important; border: none !important; }
   .table-sales tbody td { padding: 15px !important; vertical-align: middle !important; border-top: 1px solid #f1f5f9 !important; }
   .loc-badge { background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
@@ -74,11 +92,16 @@
           <div class="actions">
             <div class="btn-group">
               <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" style="border-radius: 6px; font-weight:600;">
-                <i class="glyphicon glyphicon-print"></i> Print by Location <span class="caret"></span>
+                <i class="glyphicon glyphicon-print"></i> Print By <span class="caret"></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li><a href="print_all_sales.php" target="_blank">
+                  <i class="glyphicon glyphicon-th-list"></i> All Sales
+                </a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">By Location</li>
                 <?php foreach($locations as $loc): ?>
-                  <li><a href="print_location_sales.php?location_id=<?php echo (int)$loc['id'];?>" target="_blank">
+                  <li><a href="print_location_sales.php?location_id=<?php echo (int)$loc['id'];?>">
                     <i class="glyphicon glyphicon-map-marker"></i> <?php echo remove_junk($loc['location_name']); ?>
                   </a></li>
                 <?php endforeach; ?>
@@ -95,8 +118,8 @@
             <table class="table table-sales table-hover">
               <thead>
                 <tr>
-                  <th class="text-center" style="width: 50px;">#</th>
-                  <th>Product Details</th>
+                  <th class="text-center">#</th>
+                  <th class="prod-col">Product Details</th>
                   <th class="text-center">Source Bin</th> 
                   <th class="text-center">Qty</th>
                   <th class="text-center">Total Value</th>
@@ -108,7 +131,7 @@
                 <?php foreach ($sales as $index => $sale):?>
                 <tr>
                   <td class="text-center text-muted"><?php echo $offset + ($index + 1);?></td>
-                  <td>
+                  <td class="prod-col">
                     <div style="font-weight: 600; color: #334155;"><?php echo remove_junk($sale['name']); ?></div>
                   </td>
                   <td class="text-center">

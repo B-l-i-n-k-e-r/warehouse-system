@@ -73,6 +73,7 @@
   .kpi-label { font-size: 0.8rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.05em; }
   .kpi-value { font-size: 1.5rem; font-weight: 800; color: #1e293b; display: block; }
 
+  /* Table styling to fit content */
   .modern-table-container {
     background: #fff;
     border-radius: 12px;
@@ -89,10 +90,22 @@
     font-size: 0.75rem;
     padding: 15px;
     border-bottom: 2px solid #f1f5f9;
+    white-space: nowrap;
+    width: 1%;
   }
 
-  .table tbody td { padding: 15px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; }
+  /* Expand the Product Information column */
+  .table thead th:nth-child(2) { width: auto; white-space: normal; }
+
+  .table tbody td { 
+    padding: 15px; 
+    vertical-align: middle; 
+    border-bottom: 1px solid #f1f5f9; 
+    white-space: nowrap;
+  }
   
+  .table tbody td:nth-child(2) { white-space: normal; }
+
   .btn-modern {
     border-radius: 8px;
     padding: 10px 20px;
@@ -165,8 +178,8 @@
           <input type="hidden" name="start-date" value="<?php echo $target_date; ?>">
           <input type="hidden" name="end-date" value="<?php echo $target_date; ?>">
           <input type="hidden" name="location_id" value="<?php echo $location_id; ?>">
-          <button type="submit" name="submit" class="btn btn-success btn-modern">
-             <i class="glyphicon glyphicon-print"></i> Generate PDF
+          <button type="submit" name="submit" class="btn btn-success btn-modern" <?php if(empty($sales_data)) echo 'disabled'; ?>>
+              <i class="glyphicon glyphicon-print"></i> Generate PDF
           </button>
         </form>
       </div>
@@ -179,7 +192,7 @@
           <table class="table mb-0">
             <thead>
               <tr>
-                <th class="text-center" style="width: 60px;">#</th>
+                <th class="text-center">#</th>
                 <th>Product Information</th>
                 <th>Warehouse</th>
                 <th class="text-end">Buying Price</th>
@@ -196,7 +209,7 @@
                 <td class="text-center text-muted"><?php echo ($offset + $index + 1); ?></td>
                 <td>
                   <div class="fw-bold" style="color: #1e293b;"><?php echo remove_junk($sale['name']); ?></div>
-                  <small class="text-muted">ID: #<?php echo ($offset + $index + 101); ?></small>
+                  <small class="text-muted">Item Ref: #<?php echo ($offset + $index + 101); ?></small>
                 </td>
                 <td class="text-center">
                   <span class="badge" style="background: #f1f5f9; color: #475569; border-radius: 4px; padding: 5px 10px;">
@@ -217,7 +230,10 @@
               <?php endforeach; ?>
               <?php if(empty($sales_data)): ?>
               <tr>
-                <td colspan="7" class="text-center p-5 text-muted">No sales recorded for this date and location.</td>
+                <td colspan="7" class="text-center p-5 text-muted">
+                  <div style="font-size: 1.2rem; margin-bottom: 10px;">No transactions found</div>
+                  <p>Try selecting a different date or warehouse.</p>
+                </td>
               </tr>
               <?php endif; ?>
             </tbody>
@@ -225,7 +241,7 @@
 
           <div class="pagination-bar d-flex justify-content-between align-items-center no-print">
             <div class="text-muted small">
-               Showing <?php echo min($offset + 1, $total_records); ?> to <?php echo min($offset + $limit, $total_records); ?> of <?php echo $total_records; ?> entries
+                Showing <?php echo min($offset + 1, $total_records); ?> to <?php echo min($offset + $limit, $total_records); ?> of <?php echo $total_records; ?> entries
             </div>
             <div class="btn-group">
               <a href="?page=<?php echo max(1, $page - 1); ?>" class="btn btn-default btn-sm <?php if($page <= 1) echo 'disabled'; ?>">

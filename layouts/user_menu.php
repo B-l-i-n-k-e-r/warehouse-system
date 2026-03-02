@@ -18,6 +18,10 @@
     font-weight: 500;
     transition: all 0.3s ease;
     border-left: 3px solid transparent;
+    /* Custom instruction: ensure text doesn't wrap awkwardly */
+    white-space: nowrap; 
+    width: fit-content;
+    min-width: 100%;
   }
 
   /* Vibrant Blue for Sales Icons */

@@ -15,6 +15,12 @@
   $sql .= "WHERE l.id = '{$db->escape($location_id)}' ";
   $sql .= "ORDER BY s.date DESC";
   $results = find_by_sql($sql);
+
+  // Validation: If no sales are found, set message and redirect back
+  if(empty($results)){
+    $session->msg('d', "No sale available for the selected location.");
+    redirect('sales.php', false);
+  }
   
   $loc_info = find_by_id('locations', $location_id);
 ?>
@@ -67,6 +73,11 @@
             margin-left: 10px;
         }
 
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+
         /* Dashboard Header */
         .header-main h1 { 
             margin: 0 0 25px 0; 
@@ -114,7 +125,7 @@
             color: var(--dark);
         }
 
-        /* Modern Table */
+        /* Modern Table - Fit Content Logic */
         table { 
             width: 100%; 
             border-collapse: collapse;
@@ -128,13 +139,20 @@
             color: var(--slate);
             padding: 15px;
             border-bottom: 2px solid var(--dark);
+            white-space: nowrap;
+            width: 1%;
         }
+        
+        th:nth-child(2) { width: auto; white-space: normal; }
 
         td { 
             padding: 20px 15px;
             border-bottom: 1px solid var(--border);
             font-size: 14px;
+            white-space: nowrap;
         }
+
+        td:nth-child(2) { white-space: normal; }
 
         .qty-box {
             background: var(--dark);
@@ -197,6 +215,15 @@
             font-weight: 700;
             font-size: 14px;
             box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--slate);
+            border: 1px solid var(--border);
+            box-shadow: none;
         }
 
         @media print { 
@@ -211,7 +238,10 @@
 
     <nav class="wms-navbar no-print">
         <div class="brand-logo">MOONLIT <span>WMS</span></div>
-        <button class="btn-action" onclick="window.print()">Generate Printout</button>
+        <div class="nav-actions">
+            <a href="sales.php" class="btn-action btn-secondary">Back to Sales</a>
+            <button class="btn-action" onclick="window.print()">Generate Printout</button>
+        </div>
     </nav>
 
     <div class="header-main">
@@ -236,10 +266,10 @@
     <table>
         <thead>
             <tr>
-                <th width="15%">Log Date</th>
+                <th>Log Date</th>
                 <th>Item & Specification</th>
-                <th width="15%" style="text-align: center;">Pick Qty</th>
-                <th width="10%" style="text-align: center;">Done</th>
+                <th style="text-align: center;">Pick Qty</th>
+                <th style="text-align: center;">Done</th>
             </tr>
         </thead>
         <tbody>

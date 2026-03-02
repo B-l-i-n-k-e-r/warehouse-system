@@ -110,6 +110,8 @@ if (isset($_POST['submit'])) {
             font-weight: 800;
             display: block;
         }
+        
+        /* Table column fit content logic */
         .table thead th {
             background-color: #f8fafc;
             border-bottom: 2px solid #e2e8f0;
@@ -118,11 +120,26 @@ if (isset($_POST['submit'])) {
             text-transform: uppercase;
             letter-spacing: 0.05em;
             padding: 15px;
+            white-space: nowrap;
+            width: 1%; /* Forces columns to shrink to content */
         }
+        
+        /* Allow product description to take remaining space */
+        .table thead th:nth-child(2) {
+            width: auto;
+            white-space: normal;
+        }
+
         .table tbody td {
             padding: 18px 15px;
             border-bottom: 1px solid #f1f5f9;
+            white-space: nowrap;
         }
+        
+        .table tbody td:nth-child(2) {
+            white-space: normal;
+        }
+
         .badge-location {
             background: #eef2ff;
             color: #4338ca;
@@ -133,6 +150,22 @@ if (isset($_POST['submit'])) {
         }
         .profit-pos { color: var(--success); }
         .profit-neg { color: var(--danger); }
+
+        .back-link {
+            display: inline-block;
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        .back-link:hover {
+            color: var(--primary);
+        }
         
         @media print {
             body { background: white; padding: 0; }
@@ -226,7 +259,6 @@ if (isset($_POST['submit'])) {
             </div>
 
             <div class="mt-5 d-flex justify-content-between align-items-center no-print">
-                
                 <div>
                     <button class="btn btn-light border px-4 me-2" onclick="window.print()">
                         Export PDF
@@ -236,6 +268,12 @@ if (isset($_POST['submit'])) {
                     </button>
                 </div>
             </div>
+        </div>
+        
+        <div class="text-center no-print">
+            <button onclick="window.history.back()" class="back-link">
+                ← Go Back to Previous Page
+            </button>
         </div>
     </div>
 <?php 

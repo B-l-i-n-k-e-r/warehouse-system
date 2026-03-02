@@ -10,7 +10,8 @@
       redirect('users.php');
     }
 
-    $sql = "UPDATE users SET status='0' WHERE id='{$user_id}'";
+    // Changed status to '2' for Deactivated
+    $sql = "UPDATE users SET status='2' WHERE id='{$user_id}'";
     if($db->query($sql)){
         $session->msg('s',"User account has been deactivated.");
         redirect('users.php');

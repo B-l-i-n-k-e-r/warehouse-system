@@ -8,26 +8,30 @@
 <?php
   if(isset($_POST['add_user'])){
 
-   $req_fields = array('full-name','username','password','level' );
+   // Added 'email' to the required fields array
+   $req_fields = array('full-name','username','email','password','level' );
    validate_fields($req_fields);
 
    if(empty($errors)){
-           $name   = remove_junk($db->escape($_POST['full-name']));
+       $name       = remove_junk($db->escape($_POST['full-name']));
        $username   = remove_junk($db->escape($_POST['username']));
+       $email      = remove_junk($db->escape($_POST['email'])); // Capture Email
        $password   = remove_junk($db->escape($_POST['password']));
        $user_level = (int)$db->escape($_POST['level']);
-       $password = sha1($password);
-        $query = "INSERT INTO users (";
-        $query .="name,username,password,user_level,status";
+       $password   = sha1($password);
+
+        $query  = "INSERT INTO users (";
+        $query .="name,username,email,password,user_level,status";
         $query .=") VALUES (";
-        $query .=" '{$name}', '{$username}', '{$password}', '{$user_level}','1'";
+        $query .=" '{$name}', '{$username}', '{$email}', '{$password}', '{$user_level}','1'";
         $query .=")";
+
         if($db->query($query)){
-          //sucess
+          // success
           $session->msg('s',"User account has been created! ");
           redirect('add_user.php', false);
         } else {
-          //failed
+          // failed
           $session->msg('d',' Sorry failed to create account!');
           redirect('add_user.php', false);
         }
@@ -145,20 +149,25 @@
             <div class="col-md-6">
               <div class="input-group-modern">
                 <label for="name">Full Name</label>
-                <input type="text" class="form-control-modern" name="full-name" placeholder="e.g. Mariba">
+                <input type="text" class="form-control-modern" name="full-name" placeholder="e.g. Mariba" required>
               </div>
             </div>
             <div class="col-md-6">
               <div class="input-group-modern">
                 <label for="username">Username</label>
-                <input type="text" class="form-control-modern" name="username" placeholder="blinker09">
+                <input type="text" class="form-control-modern" name="username" placeholder="blinker09" required>
               </div>
             </div>
           </div>
 
           <div class="input-group-modern">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control-modern" name="email" placeholder="user@gmail.com" required>
+               </div>
+
+          <div class="input-group-modern">
             <label for="password">Password</label>
-            <input type="password" class="form-control-modern" name="password" placeholder="••••••••">
+            <input type="password" class="form-control-modern" name="password" placeholder="••••••••" required>
           </div>
 
           <div class="input-group-modern">

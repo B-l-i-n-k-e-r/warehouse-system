@@ -130,6 +130,12 @@
 
 <div class="container-fluid" style="padding: 40px;">
   <div class="row">
+    <div class="col-md-12">
+      <?php echo display_msg($msg); ?>
+    </div>
+  </div>
+
+  <div class="row">
     <div class="col-md-5">
       <div class="panel report-card">
           <div class="panel-heading">
@@ -194,7 +200,6 @@
 <script>
 const ctx = document.getElementById('reportQtyChart').getContext('2d');
 
-// Create a more vibrant gradient
 const gradient = ctx.createLinearGradient(0, 0, 0, 300);
 gradient.addColorStop(0, 'rgba(99, 102, 241, 0.25)');
 gradient.addColorStop(1, 'rgba(99, 102, 241, 0.01)');
@@ -210,7 +215,7 @@ new Chart(ctx, {
       borderWidth: 4,
       backgroundColor: gradient,
       fill: true,
-      tension: 0.45, // Slightly curvier lines
+      tension: 0.45,
       pointBackgroundColor: '#ffffff',
       pointBorderColor: '#6366f1',
       pointBorderWidth: 3,

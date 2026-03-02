@@ -18,6 +18,10 @@
     font-weight: 500;
     transition: all 0.3s ease;
     border-left: 3px solid transparent;
+    /* Custom instruction: fit content regardless of window size */
+    white-space: nowrap;
+    width: fit-content;
+    min-width: 100%;
   }
 
   .sidebar-menu li a i.glyphicon {
@@ -70,13 +74,6 @@
     <a href="home.php">
       <i class="glyphicon glyphicon-home"></i>
       <span>Dashboard</span>
-    </a>
-  </li>
-
-  <li>
-    <a href="categorie.php">
-      <i class="glyphicon glyphicon-indent-left"></i>
-      <span>Categories</span>
     </a>
   </li>
 

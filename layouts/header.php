@@ -2,7 +2,15 @@
   // Ensure your load file is included to prevent "Undefined Variable" errors
   require_once('includes/load.php'); 
 
+  // 1. Fetch the user data
   $user = current_user(); 
+
+  // 2. SECURITY CHECK: If session exists but user is NOT found in DB
+  if($session->isUserLoggedIn(true) && empty($user)){
+      $session->logout();
+      redirect("index.php", false);
+  }
+
   // Set Timezone to East Africa (Kenya)
   date_default_timezone_set('Africa/Nairobi');
 
@@ -10,7 +18,7 @@
   $pending_count = 0;
   $low_stock_count = 0;
 
-  if(isset($user['user_level']) && $user['user_level'] === '1'){
+  if(is_array($user) && isset($user['user_level']) && $user['user_level'] === '1'){
     // Count pending users
     $notif_user = $db->query("SELECT COUNT(id) as total FROM users WHERE status = '0'");
     $pending_data = $db->fetch_assoc($notif_user);
@@ -28,7 +36,7 @@
     <meta charset="UTF-8">
     <title><?php if (!empty($page_title))
            echo remove_junk($page_title);
-            elseif(!empty($user))
+            elseif(!empty($user) && isset($user['name']))
            echo ucfirst($user['name']);
             else echo "MoonLit Warehouse System";?>
     </title>
@@ -43,6 +51,13 @@
         background: #f4f7f6; 
         margin: 0;
         padding: 0;
+      }
+
+      /* --- Custom Instruction: Columns fit content --- */
+      .container-fluid, .row, .col-fixed {
+        display: table;
+        width: 100%;
+        table-layout: auto; /* Forces columns to respect content size */
       }
       
       /* --- Notification Badge Styles --- */
@@ -85,7 +100,8 @@
         font-weight: 700;
         font-size: 14px;
         height: 100px;
-        width: 250px;
+        width: fit-content; 
+        min-width: 250px;
         text-align: center;
         letter-spacing: 1px;
         text-transform: uppercase;
@@ -93,6 +109,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        padding: 0 20px;
         gap: 5px;
         transition: all 0.3s ease;
       }
@@ -124,7 +141,6 @@
         margin-left: 15px;
       }
 
-      /* --- Collapsible Logic --- */
       body.sidebar-collapsed .sidebar { left: -250px; }
       body.sidebar-collapsed .page { padding-left: 0; }
       body.sidebar-collapsed .logo { width: 0; overflow: hidden; padding: 0; }
@@ -153,7 +169,6 @@
         body.sidebar-open .sidebar { left: 0; }
       }
 
-      /* --- Profile Dropdown --- */
       .profile { padding-right: 25px; }
       .profile a.toggle {
         text-decoration: none;
@@ -173,7 +188,7 @@
     </style>
   </head>
   <body>
-  <?php if ($session->isUserLoggedIn(true)): ?>
+  <?php if ($session->isUserLoggedIn(true) && is_array($user)): ?>
     <header id="header">
       <div class="header-left">
         <div class="logo">
