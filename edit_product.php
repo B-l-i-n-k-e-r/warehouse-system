@@ -66,29 +66,130 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
-  .edit-container { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
-  .edit-header { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; background: #fafafa; }
-  .section-tag { font-size: 11px; font-weight: 700; color: #6366f1; text-transform: uppercase; margin-bottom: 15px; display: block; }
-  .preview-card { background: #f8fafc; border-radius: 10px; padding: 20px; text-align: center; border: 1px solid #e2e8f0; }
-  .preview-img { width: 100%; max-width: 200px; border-radius: 8px; margin-bottom: 15px; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-  .form-control { border-radius: 0 8px 8px 0 !important; height: 40px; width: 100%; }
-  .btn-update { background: #6366f1; color: #fff; border: none; font-weight: 700; padding: 12px 25px; border-radius: 8px; transition: 0.2s; }
-  .btn-update:hover { background: #4f46e5; transform: translateY(-1px); }
-  
-  /* FIXED WIDTH FOR KSH. AND ICONS */
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-fill: rgba(15, 23, 42, 0.6);
+  }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
+  .edit-container { 
+    background: var(--glass-bg); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+    border: 1px solid var(--glass-border); 
+    overflow: hidden; 
+  }
+
+  .edit-header { 
+    padding: 25px; 
+    border-bottom: 1px solid var(--glass-border); 
+    background: rgba(255,255,255,0.03); 
+  }
+
+  /* Header Visibility Fix */
+  .edit-header h3 {
+    color: var(--text-main) !important;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .section-tag { 
+    font-size: 10px; 
+    font-weight: 800; 
+    color: var(--neon-blue); 
+    text-transform: uppercase; 
+    margin-bottom: 20px; 
+    display: block; 
+    letter-spacing: 1.5px;
+  }
+
+  .preview-card { 
+    background: rgba(15, 23, 42, 0.4); 
+    border-radius: 16px; 
+    padding: 25px; 
+    text-align: center; 
+    border: 1px solid var(--glass-border); 
+  }
+
+  .preview-img { 
+    width: 100%; 
+    max-width: 180px; 
+    border-radius: 12px; 
+    margin-bottom: 20px; 
+    border: 2px solid var(--glass-border); 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+    transition: transform 0.3s ease;
+  }
+  .preview-img:hover { transform: scale(1.05); }
+
+  .form-control { 
+    background: var(--input-fill) !important;
+    border: 1px solid var(--glass-border) !important; 
+    color: #fff !important;
+    height: 44px; 
+    border-radius: 0 10px 10px 0 !important;
+    transition: all 0.3s;
+  }
+  .form-control:focus { 
+    border-color: var(--neon-blue) !important; 
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important; 
+  }
+
   .input-group-addon { 
-    border-radius: 8px 0 0 8px !important; 
-    font-weight: 600; 
-    background: #f1f5f9; 
-    min-width: 45px; /* Increased width */
-    padding: 6px 12px; /* Extra breathing room */
+    border-radius: 10px 0 0 10px !important; 
+    font-weight: 700; 
+    background: rgba(56, 189, 248, 0.1) !important; 
+    color: var(--neon-blue) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-right: none !important;
+    min-width: 50px;
     text-align: center;
   }
-  .input-group { display: flex; width: 100%; table-layout: fixed; }
 
-  .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; margin-top: 10px; }
-  .btn-upload-custom { padding: 6px 12px; font-size: 12px; font-weight: 700; color: #6366f1; background: #fff; border: 1px solid #6366f1; border-radius: 6px; cursor: pointer; }
-  .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; }
+  .btn-update { 
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9); 
+    color: #fff; 
+    border: none; 
+    font-weight: 800; 
+    padding: 14px 30px; 
+    border-radius: 12px; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s; 
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+  }
+  .btn-update:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(14, 165, 233, 0.5); }
+
+  .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; margin-top: 10px; width: 100%; }
+  .btn-upload-custom { 
+    width: 100%;
+    padding: 10px; 
+    font-size: 11px; 
+    font-weight: 800; 
+    color: var(--neon-blue); 
+    background: transparent; 
+    border: 1px dashed var(--neon-blue); 
+    border-radius: 10px; 
+    cursor: pointer; 
+    text-transform: uppercase;
+    transition: 0.3s;
+  }
+  .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+
+  select.form-control { border-radius: 10px !important; }
+
+  hr { border-top: 1px solid var(--glass-border); }
 </style>
 
 <div class="container-fluid">
@@ -100,13 +201,15 @@
     <div class="col-md-12">
       <div class="edit-container">
         <div class="edit-header">
-          <h3 style="margin:0; font-weight:700;"><i class="glyphicon glyphicon-pencil"></i> Modify Product Details</h3>
+          <h3>
+            <i class="glyphicon glyphicon-edit" style="color: var(--neon-blue); margin-right: 10px;"></i> Product Modification
+          </h3>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" style="padding: 35px;">
           <form method="post" action="edit_product.php?id=<?php echo (int)$product['id'] ?>" enctype="multipart/form-data">
             <div class="row">
               <div class="col-md-8">
-                <span class="section-tag">Identification & Title</span>
+                <span class="section-tag">Primary Metadata</span>
                 <div class="form-group">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-tag"></i></span>
@@ -114,12 +217,12 @@
                   </div>
                 </div>
 
-                <span class="section-tag">Organization & Logistics</span>
+                <span class="section-tag">System Logistics</span>
                 <div class="row">
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Category</label>
-                      <select class="form-control" style="border-radius:8px !important;" name="product-categorie">
+                      <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Category</label>
+                      <select class="form-control" name="product-categorie">
                         <?php foreach ($all_categories as $cat): ?>
                           <option value="<?php echo (int)$cat['id']; ?>" <?php if($product['categorie_id'] === $cat['id']) echo "selected"; ?>>
                             <?php echo remove_junk($cat['name']); ?>
@@ -130,8 +233,8 @@
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Warehouse Bin</label>
-                      <select class="form-control" style="border-radius:8px !important;" name="product-location">
+                      <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Storage Bin</label>
+                      <select class="form-control" name="product-location">
                         <?php foreach ($all_locations as $loc): ?>
                           <option value="<?php echo (int)$loc['id']; ?>" <?php if($product['location_id'] === $loc['id']) echo "selected"; ?>>
                             <?php echo remove_junk($loc['location_name']); ?>
@@ -142,9 +245,9 @@
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Attached Media</label>
-                      <select class="form-control" style="border-radius:8px !important;" name="product-photo">
-                        <option value="0">No image</option>
+                      <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Media</label>
+                      <select class="form-control" name="product-photo">
+                        <option value="0">Default System Image</option>
                         <?php foreach ($all_photo as $photo): ?>
                           <option value="<?php echo (int)$photo['id'];?>" <?php if($product['media_id'] === $photo['id']) echo "selected"; ?>>
                             <?php echo $photo['file_name'] ?>
@@ -155,44 +258,45 @@
                   </div>
                 </div>
 
-                <span class="section-tag">Inventory & Pricing</span>
+                <span class="section-tag">Pricing & Capacity</span>
                 <div class="row">
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Current Quantity</label>
+                      <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Quantity</label>
                       <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-shopping-cart"></i></span>
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-oil"></i></span>
                         <input type="number" class="form-control" name="product-quantity" value="<?php echo (int)$product['quantity']; ?>">
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Buying Price</label>
+                      <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Buying Cost (KSH)</label>
                       <div class="input-group">
-                        <span class="input-group-addon">Ksh.</span>
+                        <span class="input-group-addon">KSH.</span>
                         <input type="number" step="0.01" class="form-control" name="buying-price" value="<?php echo (float)$product['buy_price'];?>">
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
-                      <label>Selling Price</label>
+                      <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Selling Price (KSH)</label>
                       <div class="input-group">
-                        <span class="input-group-addon">Ksh.</span>
+                        <span class="input-group-addon">KSH.</span>
                         <input type="number" step="0.01" class="form-control" name="saleing-price" value="<?php echo (float)$product['sale_price'];?>">
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                <hr>
-                <button type="submit" name="product" class="btn-update">Save All Changes</button>
-                <a href="product.php" class="btn btn-default" style="margin-left:10px; border-radius:8px; padding:12px 20px;">Cancel</a>
+                <div style="margin-top: 30px; display: flex; align-items: center; gap: 15px;">
+                  <button type="submit" name="product" class="btn-update">Commit Changes</button>
+                  <a href="product.php" class="btn" style="color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 11px;">Discard</a>
+                </div>
               </div>
 
               <div class="col-md-4">
-                <span class="section-tag">Current Snapshot</span>
+                <span class="section-tag">Image Verification</span>
                 <div class="preview-card">
                   <?php 
                     $current_img = 'no_image.jpg'; 
@@ -205,22 +309,20 @@
                   ?>
                   <img src="uploads/products/<?php echo $current_img; ?>" class="preview-img" alt="Current Product Image">
                   
-                  <div class="text-center">
-                    <div class="upload-btn-wrapper">
-                      <button class="btn-upload-custom" type="button"><i class="glyphicon glyphicon-camera"></i> Upload New</button>
-                      <input type="file" name="new_file" onchange="this.previousElementSibling.innerText = 'File Selected'; this.previousElementSibling.style.background = '#6366f1'; this.previousElementSibling.style.color = '#fff';" />
-                    </div>
+                  <div class="upload-btn-wrapper">
+                    <button class="btn-upload-custom" type="button"><i class="glyphicon glyphicon-camera"></i> Swap Image</button>
+                    <input type="file" name="new_file" onchange="this.previousElementSibling.innerText = 'Signal Received'; this.previousElementSibling.style.background = 'rgba(56, 189, 248, 0.1)'; this.previousElementSibling.style.borderStyle = 'solid';" />
                   </div>
 
-                  <hr style="margin: 15px 0;">
-                  <div style="font-weight:700; color:#334155;">
+                  <hr style="margin: 20px 0;">
+                  <div style="font-weight:800; color: #fff; font-size: 15px;">
                     <?php echo htmlspecialchars_decode($product['name']); ?>
                   </div>
-                  <div style="font-size: 14px; color: #6366f1; font-weight: bold; margin-top: 5px;">
-                    Price: Ksh. <?php echo number_format($product['sale_price'], 2); ?>
+                  <div style="font-size: 13px; color: var(--neon-blue); font-weight: 800; margin-top: 8px; font-family: monospace;">
+                    Amount: KSH <?php echo number_format($product['sale_price'], 0); ?>
                   </div>
-                  <div class="text-muted" style="font-size:12px; margin-top:5px;">
-                    Last Updated: <?php echo read_date($product['date']); ?>
+                  <div style="font-size:10px; color: var(--text-muted); margin-top:10px; text-transform: uppercase; letter-spacing: 1px;">
+                    Last Sync: <?php echo date("d M Y", strtotime($product['date'])); ?>
                   </div>
                 </div>
               </div>

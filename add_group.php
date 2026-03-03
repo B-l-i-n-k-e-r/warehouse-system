@@ -42,67 +42,117 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: rgba(15, 23, 42, 0.5);
+  }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
   .form-container {
     max-width: 550px;
     margin: 40px auto;
+    width: auto !important; /* Fit content alignment */
   }
+
   .form-card {
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    border: 1px solid #f0f0f0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   }
+
   .form-card h3 {
     margin-top: 0;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     font-weight: 700;
-    color: #334155;
-    font-size: 20px;
+    color: var(--text-main);
+    font-size: 22px;
+    letter-spacing: -0.5px;
   }
+
   .form-group label {
     font-weight: 600;
-    color: #64748b;
-    font-size: 13px;
+    color: var(--neon-blue);
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
+    display: block;
   }
+
   .form-control {
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    height: 45px;
+    background: var(--input-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px;
+    height: 50px;
+    color: #fff !important;
     box-shadow: none;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
   }
+
   .form-control:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    border-color: var(--neon-blue) !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
+    transform: translateY(-1px);
   }
+
+  /* Styling placeholder text */
+  .form-control::placeholder {
+    color: #475569;
+  }
+
   .btn-submit {
-    background: #4f46e5;
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9);
     border: none;
-    border-radius: 8px;
-    padding: 12px 25px;
-    font-weight: 600;
+    border-radius: 12px;
+    padding: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
+    color: white;
+    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
     transition: all 0.3s;
   }
+
   .btn-submit:hover {
-    background: #4338ca;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px rgba(14, 165, 233, 0.4);
+    filter: brightness(1.1);
   }
+
   .back-link {
     display: block;
     text-align: center;
-    margin-top: 20px;
-    color: #94a3b8;
+    margin-top: 25px;
+    color: var(--text-muted);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    transition: all 0.3s;
   }
-  .back-link:hover { color: #4f46e5; }
+
+  .back-link:hover { 
+    color: var(--neon-blue); 
+    text-decoration: none;
+    transform: translateX(-5px);
+  }
+
+  select.form-control option {
+    background: #1e293b;
+    color: #fff;
+  }
 </style>
 
 <div class="container">
@@ -114,7 +164,10 @@
 
   <div class="form-container">
     <div class="form-card">
-      <h3><i class="glyphicon glyphicon-plus-sign" style="color: #4f46e5; margin-right: 10px;"></i> Add User Group</h3>
+      <h3>
+        <i class="glyphicon glyphicon-plus-sign" style="color: var(--neon-blue); margin-right: 12px;"></i> 
+        Add User Group
+      </h3>
       
       <form method="post" action="add_group.php">
         <div class="form-group">
@@ -125,7 +178,9 @@
         <div class="form-group">
           <label for="level">Permission Level</label>
           <input type="number" class="form-control" name="group-level" placeholder="e.g. 2">
-          <small class="text-muted">Unique numeric identifier for the group.</small>
+          <small style="color: var(--text-muted); font-size: 10px; margin-top: 5px; display: block;">
+            Assign a unique numeric level (1 is usually Admin).
+          </small>
         </div>
 
         <div class="form-group">
@@ -136,10 +191,12 @@
           </select>
         </div>
 
-        <button type="submit" name="add" class="btn btn-info btn-submit">Create Group</button>
+        <button type="submit" name="add" class="btn btn-submit">Create Group</button>
       </form>
     </div>
-    <a href="group.php" class="back-link"><i class="glyphicon glyphicon-arrow-left"></i> Back to All Groups</a>
+    <a href="group.php" class="back-link">
+        <i class="glyphicon glyphicon-arrow-left"></i> Back to All Groups
+    </a>
   </div>
 </div>
 

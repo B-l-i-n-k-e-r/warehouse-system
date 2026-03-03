@@ -28,86 +28,187 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
-  /* Existing Styles */
-  .sales-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: none; margin-bottom: 30px; }
-  .sales-header { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-  .sales-header h2 { margin: 0; font-size: 18px; font-weight: 700; color: #1e293b; }
-  
-  /* COLUMN FIT CONTENT - Force columns to fit content exactly */
-  .table-sales thead th, 
-  .table-sales tbody td { 
-    white-space: nowrap; 
-    width: 1%; 
-  }
-  /* Allow the Product Details column to expand and fill the remaining space */
-  .table-sales .prod-col { 
-    width: auto; 
-    white-space: normal; 
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --dark-surface: #0f172a;
   }
 
-  .table-sales thead th { background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding: 15px !important; border: none !important; }
-  .table-sales tbody td { padding: 15px !important; vertical-align: middle !important; border-top: 1px solid #f1f5f9 !important; }
-  .loc-badge { background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-  .price-text { font-weight: 700; color: #0f172a; }
-  .date-text { color: #94a3b8; font-size: 12px; }
-  .btn-sale-action { width: 30px; height: 30px; line-height: 30px; padding: 0; border-radius: 6px; margin: 0 2px; }
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
+  .sales-card { 
+    background: var(--glass-bg); 
+    backdrop-filter: blur(15px);
+    border-radius: 20px; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+    border: 1px solid var(--glass-border); 
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+
+  .sales-header { 
+    padding: 25px; 
+    border-bottom: 1px solid var(--glass-border); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: rgba(255,255,255,0.03);
+  }
+
+  .sales-header h2 { 
+    margin: 0; 
+    font-size: 18px; 
+    font-weight: 800; 
+    color: var(--text-main); 
+    letter-spacing: -0.5px;
+  }
+  
+  /* COLUMN FIT CONTENT - Requirement: Make all columns fit content */
+  .table-sales { 
+    margin-bottom: 0; 
+    background: transparent !important;
+  }
+  
+  .table-sales thead th, 
+  .table-sales tbody td { 
+    white-space: nowrap !important; 
+    width: 1% !important; 
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Exception: Product details can expand to fill remaining space */
+  .table-sales .prod-col { 
+    width: auto !important; 
+    white-space: normal !important; 
+  }
+
+  .table-sales thead th { 
+    background: rgba(15, 23, 42, 0.6) !important; 
+    color: var(--neon-blue) !important; 
+    font-size: 10px !important; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    padding: 18px 15px !important;
+  }
+
+  .table-sales tbody tr { 
+    transition: background 0.3s; 
+    border-bottom: 1px solid var(--glass-border) !important;
+  }
+  
+  .table-sales tbody tr:hover { 
+    background: rgba(255,255,255,0.05) !important; 
+  }
+
+  .table-sales tbody td { 
+    padding: 15px !important; 
+    vertical-align: middle !important; 
+    color: var(--text-main) !important;
+  }
+
+  .loc-badge { 
+    background: rgba(56, 189, 248, 0.1); 
+    color: var(--neon-blue); 
+    padding: 6px 12px; 
+    border-radius: 8px; 
+    font-size: 11px; 
+    font-weight: 700;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    display: inline-block;
+  }
+
+  .price-text { 
+    font-weight: 800; 
+    color: #fff !important; 
+    font-family: 'Monaco', 'Courier New', monospace; 
+  }
+  
+  .date-text { color: var(--text-muted); font-size: 12px; }
+  
+  .btn-sale-action { 
+    width: 34px; height: 34px; line-height: 34px; padding: 0; 
+    border-radius: 10px; margin: 0 2px; 
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    transition: 0.3s;
+    display: inline-block;
+    text-align: center;
+  }
+  .btn-sale-action:hover { color: #fff; border-color: var(--neon-blue); transform: translateY(-2px); }
 
   /* Pagination Styles */
   .pagination-container {
-    padding: 20px;
+    padding: 25px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: 1px solid #f1f5f9;
+    background: rgba(15, 23, 42, 0.4);
   }
   .btn-pagination {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    padding: 6px 14px;
-    border-radius: 8px;
-    color: #6366f1;
-    font-weight: 600;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid var(--glass-border);
+    padding: 10px 20px;
+    border-radius: 12px;
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
     transition: all 0.2s;
-    margin: 0 5px;
-    text-decoration: none;
+    margin: 0 8px;
+    text-decoration: none !important;
+    letter-spacing: 0.5px;
   }
-  .btn-pagination:hover:not(.disabled) { background: #f8fafc; border-color: #6366f1; }
-  .btn-pagination.disabled { color: #cbd5e1; cursor: not-allowed; pointer-events: none; }
-  .page-info { color: #64748b; font-size: 13px; margin: 0 15px; }
+  .btn-pagination:hover:not(.disabled) { background: var(--neon-blue); color: #000; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+  .btn-pagination.disabled { opacity: 0.2; cursor: not-allowed; }
+  .page-info { color: var(--text-muted); font-size: 10px; text-transform: uppercase; margin: 0 15px; font-weight: 800; letter-spacing: 1px; }
+
+  .dropdown-menu {
+    background: #1e293b;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    padding: 10px;
+  }
+  .dropdown-menu li a { color: var(--text-main); padding: 10px 15px; font-weight: 600; border-radius: 8px; }
+  .dropdown-menu li a:hover { background: var(--neon-blue); color: #000; }
+  .divider { background-color: var(--glass-border) !important; margin: 8px 0; }
 </style>
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
-      <?php echo display_msg($msg); ?>
-    </div>
+    <div class="col-md-12"><?php echo display_msg($msg); ?></div>
   </div>
 
   <div class="row">
     <div class="col-md-12">
       <div class="sales-card">
         <div class="sales-header">
-          <h2><i class="glyphicon glyphicon-list-alt" style="color: #6366f1; margin-right: 10px;"></i> Sales Transaction History</h2>
+          <h2><i class="glyphicon glyphicon-list-alt" style="color: var(--neon-blue); margin-right: 10px;"></i> Sales Transaction History</h2>
           
           <div class="actions">
             <div class="btn-group">
-              <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" style="border-radius: 6px; font-weight:600;">
-                <i class="glyphicon glyphicon-print"></i> Print By <span class="caret"></span>
+              <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown" style="background: transparent; border: 1px solid #10b981; color: #10b981; border-radius: 10px; font-weight:800; text-transform: uppercase; padding: 10px 20px;">
+                <i class="glyphicon glyphicon-print"></i> Export <span class="caret"></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <li><a href="print_all_sales.php" target="_blank">
-                  <i class="glyphicon glyphicon-th-list"></i> All Sales
-                </a></li>
+                <li><a href="print_all_sales.php" target="_blank">All Transactions</a></li>
                 <li class="divider"></li>
-                <li class="dropdown-header">By Location</li>
+                <li class="dropdown-header" style="color: var(--neon-blue); font-size: 10px; padding-left: 15px;">By Source Bin</li>
                 <?php foreach($locations as $loc): ?>
                   <li><a href="print_location_sales.php?location_id=<?php echo (int)$loc['id'];?>">
-                    <i class="glyphicon glyphicon-map-marker"></i> <?php echo remove_junk($loc['location_name']); ?>
+                    <i class="glyphicon glyphicon-map-marker" style="font-size: 10px; margin-right: 8px;"></i> <?php echo remove_junk($loc['location_name']); ?>
                   </a></li>
                 <?php endforeach; ?>
               </ul>
             </div>
-            <a href="add_sale.php" class="btn btn-primary btn-sm" style="background:#6366f1; border:none; border-radius:6px; font-weight:600; margin-left:5px;">
+            <a href="add_sale.php" class="btn btn-primary btn-sm" style="background: var(--neon-blue); border:none; color: #000; border-radius:10px; font-weight:800; text-transform: uppercase; padding: 10px 20px; margin-left:12px;">
               <i class="glyphicon glyphicon-plus"></i> New Sale
             </a>
           </div>
@@ -115,7 +216,7 @@
 
         <div class="panel-body" style="padding: 0;">
           <div class="table-responsive">
-            <table class="table table-sales table-hover">
+            <table class="table table-sales">
               <thead>
                 <tr>
                   <th class="text-center">#</th>
@@ -123,24 +224,24 @@
                   <th class="text-center">Source Bin</th> 
                   <th class="text-center">Qty</th>
                   <th class="text-center">Total Value</th>
-                  <th class="text-center">Transaction Date</th>
+                  <th class="text-center">Date</th>
                   <th class="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <?php foreach ($sales as $index => $sale):?>
                 <tr>
-                  <td class="text-center text-muted"><?php echo $offset + ($index + 1);?></td>
+                  <td class="text-center" style="color: var(--text-muted); font-size: 11px; font-weight: 700;"><?php echo $offset + ($index + 1);?></td>
                   <td class="prod-col">
-                    <div style="font-weight: 600; color: #334155;"><?php echo remove_junk($sale['name']); ?></div>
+                    <div style="font-weight: 700; font-size: 14px; color: var(--text-main);"><?php echo remove_junk($sale['name']); ?></div>
                   </td>
                   <td class="text-center">
                     <span class="loc-badge">
-                      <i class="glyphicon glyphicon-map-marker"></i>
+                      <i class="glyphicon glyphicon-tags" style="font-size: 9px; margin-right: 5px;"></i>
                       <?php echo $sale['location_name'] ? remove_junk($sale['location_name']) : 'N/A'; ?>
                     </span>
                   </td>
-                  <td class="text-center" style="font-weight: 600;"><?php echo (int)$sale['qty']; ?></td>
+                  <td class="text-center" style="font-weight: 800; color: var(--neon-blue); font-size: 15px;"><?php echo (int)$sale['qty']; ?></td>
                   <td class="text-center price-text">
                     Ksh <?php echo number_format((float)$sale['price'], 2); ?>
                   </td>
@@ -149,14 +250,14 @@
                   </td>
                   <td class="text-center">
                     <div class="btn-group">
-                      <a href="picking_list.php?id=<?php echo (int)$sale['id'];?>" class="btn btn-default btn-sale-action" title="Pick List" target="_blank">
+                      <a href="picking_list.php?id=<?php echo (int)$sale['id'];?>" class="btn btn-sale-action" title="Pick List" target="_blank">
                         <i class="glyphicon glyphicon-print"></i>
                       </a>
-                      <a href="edit_sale.php?id=<?php echo (int)$sale['id'];?>" class="btn btn-warning btn-sale-action" title="Edit">
-                        <i class="glyphicon glyphicon-edit"></i>
+                      <a href="edit_sale.php?id=<?php echo (int)$sale['id'];?>" class="btn btn-sale-action" title="Edit">
+                        <i class="glyphicon glyphicon-edit" style="color: #f59e0b;"></i>
                       </a>
-                      <a href="delete_sale.php?id=<?php echo (int)$sale['id'];?>" class="btn btn-danger btn-sale-action" title="Delete" onclick="return confirm('Archive this transaction?')">
-                        <i class="glyphicon glyphicon-trash"></i>
+                      <a href="delete_sale.php?id=<?php echo (int)$sale['id'];?>" class="btn btn-sale-action" title="Delete" onclick="return confirm('Archive this transaction?')">
+                        <i class="glyphicon glyphicon-trash" style="color: #ef4444;"></i>
                       </a>
                     </div>
                   </td>
@@ -168,10 +269,10 @@
 
           <div class="pagination-container">
             <a href="?page=<?php echo $page - 1; ?>" class="btn-pagination <?php if($page <= 1) echo 'disabled'; ?>">
-              <i class="glyphicon glyphicon-chevron-left"></i> Previous
+              <i class="glyphicon glyphicon-chevron-left"></i> Prev
             </a>
             
-            <span class="page-info">Page <b><?php echo $page; ?></b> of <b><?php echo $total_pages; ?></b></span>
+            <span class="page-info">System Page <?php echo $page; ?> / <?php echo $total_pages; ?></span>
 
             <a href="?page=<?php echo $page + 1; ?>" class="btn-pagination <?php if($page >= $total_pages) echo 'disabled'; ?>">
               Next <i class="glyphicon glyphicon-chevron-right"></i>

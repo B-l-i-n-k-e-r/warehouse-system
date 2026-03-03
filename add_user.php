@@ -44,88 +44,142 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: rgba(15, 23, 42, 0.5);
+  }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
   .form-wrapper {
     max-width: 650px;
     margin: 40px auto;
   }
+
   .user-add-card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    border: none;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
     overflow: hidden;
   }
+
   .card-header-accent {
-    background: #f8fafc;
-    padding: 25px 30px;
-    border-bottom: 1px solid #f1f5f9;
+    padding: 30px;
+    border-bottom: 1px solid var(--glass-border);
   }
+
   .card-header-accent h3 {
     margin: 0;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
   }
+
   .form-body {
-    padding: 30px;
+    padding: 40px;
   }
+
   .input-group-modern {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
   }
+
   .input-group-modern label {
     display: block;
-    font-weight: 600;
-    font-size: 13px;
-    color: #64748b;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--neon-blue);
     text-transform: uppercase;
-    letter-spacing: 0.025em;
-    margin-bottom: 8px;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
   }
+
   .form-control-modern {
     display: block;
     width: 100%;
-    height: 48px;
-    padding: 10px 16px;
+    height: 50px;
+    padding: 12px 18px;
     font-size: 15px;
-    color: #334155;
-    background-color: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    transition: all 0.2s ease-in-out;
+    color: #fff !important;
+    background-color: var(--input-bg) !important;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
   }
+
   .form-control-modern:focus {
-    border-color: #6366f1;
+    border-color: var(--neon-blue) !important;
     outline: 0;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
+    transform: translateY(-1px);
   }
+
+  /* Dropdown arrow styling */
+  select.form-control-modern {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2338bdf8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 15px;
+  }
+
+  select.form-control-modern option {
+    background: #1e293b;
+    color: #fff;
+  }
+
   .btn-create-user {
-    background: #6366f1;
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9);
     color: #fff;
     border: none;
-    border-radius: 10px;
-    padding: 14px 24px;
-    font-weight: 600;
-    font-size: 16px;
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     width: 100%;
-    transition: all 0.2s;
-    margin-top: 10px;
+    transition: all 0.3s;
+    margin-top: 15px;
+    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
   }
+
   .btn-create-user:hover {
-    background: #4f46e5;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px rgba(14, 165, 233, 0.4);
+    filter: brightness(1.1);
     color: #fff;
   }
+
   .back-btn {
     display: inline-block;
-    margin-top: 20px;
-    color: #94a3b8;
+    margin-top: 30px;
+    color: var(--text-muted);
     text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
+    font-weight: 600;
+    transition: 0.3s;
   }
+
   .back-btn:hover {
-    color: #6366f1;
+    color: var(--neon-blue);
+    text-decoration: none;
+    transform: translateX(-5px);
+  }
+
+  .help-text {
+    font-size: 11px;
+    margin-top: 8px;
+    color: var(--text-muted);
   }
 </style>
 
@@ -139,7 +193,7 @@
   <div class="form-wrapper">
     <div class="user-add-card">
       <div class="card-header-accent">
-        <h3><i class="glyphicon glyphicon-user" style="color: #6366f1; margin-right: 12px;"></i> Add New System User</h3>
+        <h3><i class="glyphicon glyphicon-user" style="color: var(--neon-blue); margin-right: 12px;"></i> Add New System User</h3>
       </div>
       
       <div class="form-body">
@@ -163,7 +217,7 @@
           <div class="input-group-modern">
             <label for="email">Email Address</label>
             <input type="email" class="form-control-modern" name="email" placeholder="user@gmail.com" required>
-               </div>
+          </div>
 
           <div class="input-group-modern">
             <label for="password">Password</label>
@@ -177,7 +231,7 @@
                <option value="<?php echo $group['group_level'];?>"><?php echo ucwords($group['group_name']);?></option>
             <?php endforeach;?>
             </select>
-            <p class="help-block" style="font-size: 12px; margin-top: 5px; color: #94a3b8;">Determines what parts of the system this user can access.</p>
+            <p class="help-text">Determines system access permissions.</p>
           </div>
 
           <div class="form-group clearfix">

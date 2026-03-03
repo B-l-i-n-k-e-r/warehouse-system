@@ -56,49 +56,138 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
-  .product-form-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #edf2f7; margin-bottom: 30px; }
-  .product-form-header { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; }
-  .product-form-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #334155; }
-  .form-section-title { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; margin-top: 10px; }
-  
-  /* FIXED WIDTH FOR KSH. PREFIX */
-  .input-group-addon { 
-    background: #f8fafc; 
-    border-color: #e2e8f0; 
-    color: #64748b; 
-    min-width: 55px; /* Added more space for 'Ksh.' */
-    text-align: center;
-    font-weight: 600;
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --neon-purple: #818cf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-fill: rgba(15, 23, 42, 0.6);
   }
-  .input-group { width: 100%; display: flex; }
-  
-  .form-control { border-radius: 0 8px 8px 0 !important; border-color: #e2e8f0; height: 42px; width: 100%; }
-  .form-control:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
-  
-  /* Select boxes need matching border radius since they aren't in input-groups */
-  select.form-control { border-radius: 8px !important; }
 
-  .btn-submit-product { background: #6366f1; color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 700; border: none; transition: all 0.2s; }
-  .btn-submit-product:hover { background: #4f46e5; transform: translateY(-1px); color: #fff; }
-  .back-link { display: block; text-align: center; margin-top: 20px; margin-bottom: 30px; color: #94a3b8; text-decoration: none; font-weight: 500; }
-  
-  .custom-file-upload {
-    border: 1px solid #e2e8f0;
-    display: block;
-    padding: 10px 12px;
-    cursor: pointer;
-    border-radius: 8px;
-    background: #fff;
-    font-size: 14px;
-    color: #64748b;
-    transition: 0.3s;
-    height: 42px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
   }
-  .custom-file-upload:hover { background: #f8fafc; border-color: #6366f1; }
-  .custom-file-upload i { margin-right: 8px; color: #6366f1; }
+
+  .product-form-card { 
+    background: var(--glass-bg); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 24px; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+    border: 1px solid var(--glass-border); 
+    margin-bottom: 40px; 
+    overflow: hidden;
+  }
+
+  .product-form-header { 
+    padding: 30px; 
+    border-bottom: 1px solid var(--glass-border); 
+    background: rgba(255,255,255,0.02);
+  }
+
+  .product-form-header h3 { 
+    margin: 0; 
+    font-size: 22px; 
+    font-weight: 800; 
+    color: var(--text-main); 
+    letter-spacing: -0.5px;
+  }
+
+  .form-section-title { 
+    font-size: 11px; 
+    font-weight: 800; 
+    color: var(--neon-blue); 
+    text-transform: uppercase; 
+    letter-spacing: 1.5px; 
+    margin-bottom: 20px; 
+    margin-top: 25px; 
+    display: flex;
+    align-items: center;
+  }
+  .form-section-title::after {
+    content: "";
+    height: 1px;
+    background: linear-gradient(to right, var(--glass-border), transparent);
+    flex-grow: 1;
+    margin-left: 15px;
+  }
+  
+  .input-group-addon { 
+    background: rgba(56, 189, 248, 0.1) !important; 
+    border: 1px solid var(--glass-border) !important; 
+    color: var(--neon-blue) !important; 
+    min-width: 60px;
+    font-weight: 700;
+    font-size: 12px;
+    border-right: none !important;
+    border-radius: 12px 0 0 12px !important;
+  }
+
+  .form-control { 
+    background: var(--input-fill) !important;
+    border: 1px solid var(--glass-border) !important; 
+    color: #fff !important;
+    height: 48px; 
+    border-radius: 0 12px 12px 0 !important;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus { 
+    border-color: var(--neon-blue) !important; 
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important; 
+  }
+
+  /* Specific fix for standalone selects */
+  select.form-control { border-radius: 12px !important; appearance: none; cursor: pointer; }
+
+  .btn-submit-product { 
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9); 
+    color: #fff; 
+    padding: 14px 40px; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none; 
+    transition: all 0.3s; 
+    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+  }
+  .btn-submit-product:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 15px 30px rgba(14, 165, 233, 0.5);
+    filter: brightness(1.1);
+  }
+
+  .custom-file-upload {
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    cursor: pointer;
+    border-radius: 12px;
+    background: var(--input-fill);
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: 0.3s;
+    height: 48px;
+    width: 100%;
+  }
+  .custom-file-upload:hover { border-color: var(--neon-blue); color: var(--text-main); }
+  .custom-file-upload i { margin-right: 10px; color: var(--neon-blue); font-size: 16px; }
+
+  .back-link { 
+    display: block; 
+    text-align: center; 
+    margin-top: 10px; 
+    color: var(--text-muted); 
+    font-weight: 600; 
+    font-size: 13px;
+    transition: 0.3s;
+  }
+  .back-link:hover { color: var(--neon-blue); transform: translateX(-3px); }
 </style>
 
 <div class="container-fluid">
@@ -111,25 +200,25 @@
   <div class="row">
     <div class="col-md-10 col-md-offset-1">
       <div class="product-form-card">
-        <div class="product-form-header">
-          <h3><i class="glyphicon glyphicon-plus" style="color: #6366f1; margin-right: 10px;"></i> Add New Inventory Item</h3>
+        <div class="product-form-header text-center">
+          <h3><i class="glyphicon glyphicon-barcode" style="color: var(--neon-blue); margin-right: 12px;"></i> Add New Product</h3>
         </div>
-        <div class="panel-body" style="padding: 30px;">
+        <div class="panel-body" style="padding: 40px;">
           <form method="post" action="add_product.php" enctype="multipart/form-data">
             
-            <div class="form-section-title">General Information</div>
+            <div class="form-section-title">Primary Identification</div>
             <div class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-tag"></i></span>
-                <input type="text" class="form-control" name="product-title" placeholder="Full Product Name / Title (e.g. Nuts & Bolts)">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-tag"></i>TITLE</span>
+                <input type="text" class="form-control" name="product-title" placeholder="Hardware Designation (e.g. Industrial Steel Bolt M10)">
               </div>
             </div>
 
-            <div class="form-section-title">Logistics & Storage</div>
+            <div class="form-section-title">Logistics & Deployment</div>
             <div class="row">
               <div class="col-md-4">
                 <div class="form-group">
-                  <label>Category</label>
+                  <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Sector Category</label>
                   <select class="form-control" name="product-categorie">
                     <option value="">Select Category</option>
                     <?php foreach ($all_categories as $cat): ?>
@@ -140,12 +229,12 @@
               </div>
               <div class="col-md-4">
                 <div class="form-group">
-                  <label>Bin Location</label>
+                  <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Storage Bin</label>
                   <select class="form-control" name="product-location">
                     <option value="">Select Bin Location</option>
                     <?php foreach ($all_locations as $loc): ?>
                       <option value="<?php echo (int)$loc['id'] ?>">
-                        <?php echo $loc['location_name'] ?> (<?php echo $loc['zone'] ?>)
+                        <?php echo $loc['location_name'] ?> —  <?php echo $loc['zone'] ?> Zone
                       </option>
                     <?php endforeach; ?>
                   </select>
@@ -153,21 +242,21 @@
               </div>
               <div class="col-md-4">
                 <div class="form-group">
-                  <label>Product Image</label>
+                  <label style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Image</label>
                   <label class="custom-file-upload">
-                    <input type="file" name="product-photo" style="display:none;" onchange="this.querySelector('span').textContent = this.files[0].name; this.style.borderColor='#6366f1';">
-                    <i class="glyphicon glyphicon-camera"></i> <span>Choose Image...</span>
+                    <input type="file" name="product-photo" style="display:none;" onchange="this.parentElement.querySelector('span').textContent = this.files[0].name; this.parentElement.style.borderColor='#38bdf8';">
+                    <i class="glyphicon glyphicon-camera"></i> <span>Upload Image</span>
                   </label>
                 </div>
               </div>
             </div>
 
-            <div class="form-section-title">Stock Levels & Pricing</div>
+            <div class="form-section-title">Quantity & Valuation</div>
             <div class="row">
               <div class="col-md-4">
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-shopping-cart"></i></span>
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
                     <input type="number" class="form-control" name="product-quantity" placeholder="Quantity">
                   </div>
                 </div>
@@ -175,31 +264,31 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon">Ksh.</span>
-                    <input type="number" step="0.01" class="form-control" name="buying-price" placeholder="Cost Price">
+                    <span class="input-group-addon">KSH.</span>
+                    <input type="number" step="0.01" class="form-control" name="buying-price" placeholder="Buying Cost">
                   </div>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <div class="input-group">
-                    <span class="input-group-addon">Ksh.</span>
+                    <span class="input-group-addon">KSH.</span>
                     <input type="number" step="0.01" class="form-control" name="saleing-price" placeholder="Selling Price">
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="text-right" style="margin-top: 20px;">
+            <div class="text-center" style="margin-top: 40px;">
               <button type="submit" name="add_product" class="btn-submit-product">
-                <i class="glyphicon glyphicon-ok"></i> Save to Inventory
+                <i class="glyphicon glyphicon-plus-sign"></i> Add Product
               </button>
             </div>
 
           </form>
         </div>
       </div>
-      <a href="product.php" class="back-link"><i class="glyphicon glyphicon-arrow-left"></i> Back to All Products</a>
+      <a href="product.php" class="back-link"><i class="glyphicon glyphicon-arrow-left"></i> Return to Master Inventory</a>
     </div>
   </div>
 </div>

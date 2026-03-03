@@ -20,7 +20,8 @@
   // Get total count for pagination
   $count_sql = "SELECT COUNT(*) AS total FROM sales s LEFT JOIN products p ON s.product_id = p.id WHERE DATE(s.date) = '{$target_date}'";
   if($location_id) { $count_sql .= " AND p.location_id = '{$location_id}' "; }
-  $total_records = $db->fetch_assoc($db->query($count_sql))['total'];
+  $total_records_res = $db->query($count_sql);
+  $total_records = $db->fetch_assoc($total_records_res)['total'];
   $total_pages = ceil($total_records / $limit);
 
   // SQL with LIMIT and OFFSET for pagination
@@ -34,7 +35,7 @@
   $sql .= " LIMIT {$limit} OFFSET {$offset}";
   $sales_data = find_by_sql($sql);
 
-  // Calculate Totals for KPI Cards (Calculate on full day, not just the page)
+  // Calculate Totals for KPI Cards
   $kpi_sql = "SELECT SUM(s.qty * p.sale_price) as revenue, SUM(s.qty * (p.sale_price - p.buy_price)) as profit ";
   $kpi_sql .= "FROM sales s JOIN products p ON s.product_id = p.id WHERE DATE(s.date) = '{$target_date}'";
   if($location_id) { $kpi_sql .= " AND p.location_id = '{$location_id}' "; }
@@ -45,110 +46,166 @@
 ?>
 <?php include_once('layouts/header.php'); ?>
 
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
   :root {
-    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --primary: #38bdf8; 
+    --accent: #22c55e;
+    --dark-bg: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+    --border: rgba(56, 189, 248, 0.1);
   }
 
-  .action-bar {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
-    margin-bottom: 25px;
-    border: 1px solid #e2e8f0;
+  body {
+    background-color: var(--dark-bg);
+    background-image: radial-gradient(circle at 2px 2px, rgba(56, 189, 248, 0.05) 1px, transparent 0);
+    background-size: 40px 40px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-main);
   }
 
+  /* KPI Cards */
   .kpi-card {
-    background: #fff;
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s;
+  }
+  .kpi-card:hover { transform: translateY(-5px); }
+  .kpi-label { font-size: 0.7rem; text-transform: uppercase; color: var(--primary); font-weight: 800; letter-spacing: 0.1em; }
+  .kpi-value { font-size: 1.6rem; font-weight: 800; color: #fff; display: block; margin-top: 5px; }
+
+  /* Action Bar */
+  .action-bar {
+    background: var(--card-bg);
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
-    border-left: 5px solid #6366f1;
-    margin-bottom: 25px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 30px;
   }
 
-  .kpi-card.profit { border-left-color: #10b981; }
+  .form-control { 
+    background: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid var(--border);
+    border-radius: 10px !important; 
+    color: #fff !important;
+  }
 
-  .kpi-label { font-size: 0.8rem; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.05em; }
-  .kpi-value { font-size: 1.5rem; font-weight: 800; color: #1e293b; display: block; }
+  /* COMBOBOX FIT CONTENT */
+  select[name="location_id"] {
+    width: fit-content !important;
+    min-width: 160px;
+    max-width: 300px;
+    height:auto;
+    padding-right: 35px; /* Space for the dropdown arrow */
+  }
 
-  /* Table styling to fit content */
+  /* TABLE CUSTOMIZATION */
   .modern-table-container {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border);
     overflow: hidden;
-    border: 1px solid #e2e8f0;
   }
 
+  .table { color: var(--text-main); margin-bottom: 0; width: 100%; table-layout: auto; }
+  
   .table thead th {
-    background: #f8fafc;
-    color: #475569;
-    font-weight: 600;
+    background: rgba(56, 189, 248, 0.05);
+    color: var(--primary);
+    font-weight: 800;
     text-transform: uppercase;
-    font-size: 0.75rem;
-    padding: 15px;
-    border-bottom: 2px solid #f1f5f9;
+    font-size: 0.7rem;
+    padding: 18px 15px;
+    border-bottom: 2px solid var(--border);
     white-space: nowrap;
-    width: 1%;
+    width: 1%; /* Shrink all columns to fit content */
   }
 
-  /* Expand the Product Information column */
-  .table thead th:nth-child(2) { width: auto; white-space: normal; }
+  /* Let Product Description expand */
+  .table thead th:nth-child(2), 
+  .table tbody td:nth-child(2) { 
+    width: auto; 
+    white-space: normal; 
+    min-width: 200px; 
+  }
 
   .table tbody td { 
     padding: 15px; 
     vertical-align: middle; 
-    border-bottom: 1px solid #f1f5f9; 
+    border-bottom: 1px solid var(--border); 
     white-space: nowrap;
+    color: var(--text-dim);
   }
-  
-  .table tbody td:nth-child(2) { white-space: normal; }
+
+  /* HOVER EFFECT */
+  .table tbody tr {
+    transition: all 0.2s ease;
+  }
+
+  .table tbody tr:hover {
+    background-color: rgba(56, 189, 248, 0.08) !important;
+    box-shadow: inset 4px 0 0 var(--primary);
+  }
 
   .btn-modern {
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 10px 20px;
-    font-weight: 600;
-    transition: all 0.2s;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: 0.3s;
   }
-
-  .btn-modern:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
   .pagination-bar {
-    padding: 15px 20px;
-    background: #f8fafc;
-    border-top: 1px solid #f1f5f9;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.4);
+    border-top: 1px solid var(--border);
   }
 
-  @media print { .no-print { display: none !important; } .container-fluid { width: 100%; } }
+  .badge-loc {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--primary);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+
+  @media print { .no-print { display: none !important; } }
 </style>
 
-<div class="container-fluid" style="padding: 30px;">
+<div class="container-fluid" style="padding: 40px;">
   
-  <div class="row">
+  <div class="row" style="margin-bottom: 30px;">
     <div class="col-md-3">
-      <div class="kpi-card">
+      <div class="kpi-card" style="border-top: 4px solid var(--primary);">
         <span class="kpi-label">Target Date</span>
-        <span class="kpi-value text-primary"><?php echo date('M d, Y', strtotime($target_date)); ?></span>
+        <span class="kpi-value"><?php echo date('d M, Y', strtotime($target_date)); ?></span>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="kpi-card">
-        <span class="kpi-label">Daily Revenue</span>
-        <span class="kpi-value">Ksh. <?php echo number_format($grand_total, 2); ?></span>
+      <div class="kpi-card" style="border-top: 4px solid var(--accent);">
+        <span class="kpi-label">Revenue</span>
+        <span class="kpi-value">Ksh <?php echo number_format($grand_total, 0); ?></span>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="kpi-card profit">
-        <span class="kpi-label">Estimated Profit</span>
-        <span class="kpi-value text-success">Ksh. <?php echo number_format($total_profit, 2); ?></span>
+      <div class="kpi-card" style="border-top: 4px solid #f59e0b;">
+        <span class="kpi-label">Net Profit</span>
+        <span class="kpi-value" style="color: var(--accent);">Ksh <?php echo number_format($total_profit, 0); ?></span>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="kpi-card" style="border-left-color: #f59e0b;">
-        <span class="kpi-label">Sales Count</span>
-        <span class="kpi-value"><?php echo (int)$total_records; ?> Transactions</span>
+      <div class="kpi-card" style="border-top: 4px solid #8b5cf6;">
+        <span class="kpi-label">Transactions</span>
+        <span class="kpi-value"><?php echo (int)$total_records; ?> Items</span>
       </div>
     </div>
   </div>
@@ -158,12 +215,11 @@
       <div class="action-bar d-flex justify-content-between align-items-center">
         <form class="form-inline d-flex align-items-center" method="post" action="daily_sales.php" style="gap: 15px;">
             <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-              <input type="text" class="datepicker form-control" name="daily-date" value="<?php echo $target_date; ?>" style="width: 150px;">
+              <input type="text" class="datepicker form-control" name="daily-date" value="<?php echo $target_date; ?>" style="width: 140px;">
             </div>
 
-            <select class="form-control" name="location_id" style="width: 200px;">
-              <option value="">All Locations</option>
+            <select class="form-control" name="location_id">
+              <option value="">All Warehouses</option>
               <?php foreach($all_locations as $loc): ?>
                 <option value="<?php echo (int)$loc['id']; ?>" <?php if($location_id == $loc['id']) echo 'selected'; ?>>
                   <?php echo remove_junk($loc['location_name']); ?>
@@ -171,7 +227,7 @@
               <?php endforeach; ?>
             </select>
 
-            <button type="submit" name="submit" class="btn btn-primary btn-modern">Update View</button>
+            <button type="submit" name="submit" class="btn btn-primary btn-modern">Filter</button>
         </form>
 
         <form method="post" action="sale_report_process.php">
@@ -179,7 +235,7 @@
           <input type="hidden" name="end-date" value="<?php echo $target_date; ?>">
           <input type="hidden" name="location_id" value="<?php echo $location_id; ?>">
           <button type="submit" name="submit" class="btn btn-success btn-modern" <?php if(empty($sales_data)) echo 'disabled'; ?>>
-              <i class="glyphicon glyphicon-print"></i> Generate PDF
+              Print Report
           </button>
         </form>
       </div>
@@ -189,16 +245,16 @@
   <div class="row">
     <div class="col-md-12">
       <div class="modern-table-container">
-          <table class="table mb-0">
+          <table class="table">
             <thead>
               <tr>
                 <th class="text-center">#</th>
-                <th>Product Information</th>
+                <th>Product Description</th>
                 <th>Warehouse</th>
-                <th class="text-end">Buying Price</th>
-                <th class="text-end">Selling Price</th>
+                <th class="text-end">Buy Price</th>
+                <th class="text-end">Sale Price</th>
                 <th class="text-center">Qty</th>
-                <th class="text-end">Total Revenue</th>
+                <th class="text-end">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -206,33 +262,27 @@
                   $total_sale = $sale['qty'] * $sale['sale_price'];
               ?>
               <tr>
-                <td class="text-center text-muted"><?php echo ($offset + $index + 1); ?></td>
+                <td class="text-center" style="font-size: 0.8rem;"><?php echo ($offset + $index + 1); ?></td>
                 <td>
-                  <div class="fw-bold" style="color: #1e293b;"><?php echo remove_junk($sale['name']); ?></div>
-                  <small class="text-muted">Item Ref: #<?php echo ($offset + $index + 101); ?></small>
+                  <div style="color: #fff; font-weight: 700;"><?php echo strtoupper(remove_junk($sale['name'])); ?></div>
                 </td>
-                <td class="text-center">
-                  <span class="badge" style="background: #f1f5f9; color: #475569; border-radius: 4px; padding: 5px 10px;">
-                    <?php echo remove_junk($sale['location_name']); ?>
-                  </span>
+                <td>
+                  <span class="badge-loc"><?php echo strtoupper($sale['location_name']); ?></span>
                 </td>
-                <td class="text-end text-muted">Ksh. <?php echo number_format($sale['buy_price'], 2); ?></td>
-                <td class="text-end fw-bold">Ksh. <?php echo number_format($sale['sale_price'], 2); ?></td>
+                <td class="text-end">Ksh <?php echo number_format($sale['buy_price'], 0); ?></td>
+                <td class="text-end" style="color: #fff;">Ksh <?php echo number_format($sale['sale_price'], 0); ?></td>
                 <td class="text-center">
-                  <span class="badge bg-light" style="border: 1px solid #e2e8f0; color: #6366f1; font-weight: 800; font-size: 1.1rem;">
-                    <?php echo (int)$sale['qty']; ?>
-                  </span>
+                  <span style="color: var(--primary); font-weight: 800;"><?php echo (int)$sale['qty']; ?></span>
                 </td>
                 <td class="text-end">
-                  <strong style="color: #6366f1;">Ksh. <?php echo number_format($total_sale, 2); ?></strong>
+                  <strong style="color: var(--primary);">Ksh <?php echo number_format($total_sale, 0); ?></strong>
                 </td>
               </tr>
               <?php endforeach; ?>
               <?php if(empty($sales_data)): ?>
               <tr>
-                <td colspan="7" class="text-center p-5 text-muted">
-                  <div style="font-size: 1.2rem; margin-bottom: 10px;">No transactions found</div>
-                  <p>Try selecting a different date or warehouse.</p>
+                <td colspan="7" class="text-center p-5">
+                  <div style="color: var(--text-dim);">No transactions recorded for this selection.</div>
                 </td>
               </tr>
               <?php endif; ?>
@@ -240,19 +290,14 @@
           </table>
 
           <div class="pagination-bar d-flex justify-content-between align-items-center no-print">
-            <div class="text-muted small">
-                Showing <?php echo min($offset + 1, $total_records); ?> to <?php echo min($offset + $limit, $total_records); ?> of <?php echo $total_records; ?> entries
+            <div style="color: var(--text-dim); font-size: 0.75rem;">
+                Showing <?php echo min($offset + 1, $total_records); ?> - <?php echo min($offset + $limit, $total_records); ?> of <?php echo $total_records; ?>
             </div>
             <div class="btn-group">
-              <a href="?page=<?php echo max(1, $page - 1); ?>" class="btn btn-default btn-sm <?php if($page <= 1) echo 'disabled'; ?>">
-                <i class="glyphicon glyphicon-chevron-left"></i> Previous
-              </a>
-              <a href="?page=<?php echo min($total_pages, $page + 1); ?>" class="btn btn-default btn-sm <?php if($page >= $total_pages) echo 'disabled'; ?>">
-                Next <i class="glyphicon glyphicon-chevron-right"></i>
-              </a>
+              <a href="?page=<?php echo max(1, $page - 1); ?>" class="btn btn-sm btn-outline-secondary <?php if($page <= 1) echo 'disabled'; ?>" style="border-color: var(--border); color: #fff;">Prev</a>
+              <a href="?page=<?php echo min($total_pages, $page + 1); ?>" class="btn btn-sm btn-outline-secondary <?php if($page >= $total_pages) echo 'disabled'; ?>" style="border-color: var(--border); color: #fff;">Next</a>
             </div>
           </div>
-
       </div>
     </div>
   </div>

@@ -39,79 +39,145 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-orange: #fb923c;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: rgba(15, 23, 42, 0.6);
+  }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
   .edit-wrapper {
     max-width: 600px;
-    margin: 30px auto;
+    margin: 40px auto;
   }
+
   .edit-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    border: none;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
     overflow: hidden;
   }
+
   .card-header-orange {
-    background: #f59e0b; /* Professional Warning Orange */
-    padding: 25px;
-    color: #fff;
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.1), rgba(249, 115, 22, 0.1));
+    padding: 30px;
+    border-bottom: 1px solid var(--glass-border);
   }
-  .card-header-orange h3 { margin: 0; font-size: 18px; font-weight: 700; }
-  
-  .form-content { padding: 30px; }
-  
+
+  .card-header-orange h3 { 
+    margin: 0; 
+    font-size: 20px; 
+    font-weight: 800; 
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+  }
+
+  .form-content { padding: 40px; }
+
   .notice-box {
-    background: #fffbeb;
-    border-left: 4px solid #f59e0b;
-    padding: 15px;
-    margin-bottom: 25px;
-    border-radius: 0 8px 8px 0;
+    background: rgba(251, 146, 60, 0.05);
+    border-left: 4px solid var(--neon-orange);
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    border-radius: 4px 12px 12px 4px;
   }
-  .notice-box p { margin: 0; font-size: 13px; color: #92400e; }
-  
-  .form-group label {
+
+  .notice-box p { 
+    margin: 0; 
+    font-size: 13px; 
+    color: var(--text-main); 
     font-weight: 600;
-    color: #334155;
-    font-size: 13px;
-    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .form-group label {
+    font-weight: 700;
+    color: var(--neon-orange);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
     display: block;
   }
+
   .modern-input {
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    height: 45px;
-    padding: 10px 15px;
-    transition: all 0.2s;
+    background: var(--input-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px;
+    height: 50px;
+    color: #fff !important;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
   }
+
   .modern-input:focus {
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    border-color: var(--neon-orange) !important;
+    box-shadow: 0 0 15px rgba(251, 146, 60, 0.2) !important;
     outline: none;
+    transform: translateY(-1px);
   }
+
+  select.modern-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fb923c'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 15px;
+  }
+
+  select.modern-input option {
+    background: #1e293b;
+    color: #fff;
+  }
+
   .btn-update-loc {
-    background: #f59e0b;
+    background: linear-gradient(135deg, var(--neon-orange), #f97316);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-weight: 600;
+    border-radius: 12px;
+    padding: 15px 25px;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     width: 100%;
-    margin-top: 15px;
-    transition: all 0.2s;
+    margin-top: 20px;
+    transition: all 0.3s;
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2);
   }
+
   .btn-update-loc:hover { 
-    background: #d97706; 
-    transform: translateY(-1px);
+    transform: translateY(-2px); 
+    box-shadow: 0 15px 25px rgba(249, 115, 22, 0.4);
+    filter: brightness(1.1);
     color: #fff;
   }
+
   .back-link {
     display: block;
     text-align: center;
-    margin-top: 20px;
-    color: #64748b;
+    margin-top: 25px;
+    color: var(--text-muted);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 13px;
+    transition: 0.3s;
   }
-  .back-link:hover { color: #f59e0b; }
+
+  .back-link:hover { 
+    color: var(--neon-orange); 
+    transform: translateX(-3px);
+  }
 </style>
 
 <div class="container">
@@ -124,12 +190,15 @@
   <div class="edit-wrapper">
     <div class="edit-card">
       <div class="card-header-orange">
-        <h3><i class="glyphicon glyphicon-edit" style="margin-right: 10px;"></i> Edit Bin: <?php echo remove_junk(ucfirst($location['location_name'])); ?></h3>
+        <h3>
+          <i class="glyphicon glyphicon-edit" style="color: var(--neon-orange); margin-right: 12px;"></i> 
+          Edit Bin: <?php echo remove_junk(ucfirst($location['location_name'])); ?>
+        </h3>
       </div>
 
       <div class="form-content">
         <div class="notice-box">
-          <p><strong>Note:</strong> Renaming a bin will update the location label for all products currently assigned to this code.</p>
+          <p><i class="glyphicon glyphicon-exclamation-sign"></i> System Warning: Renaming this bin will automatically re-map all inventory items currently linked to this code.</p>
         </div>
 
         <form method="post" action="edit_location.php?id=<?php echo (int)$location['id']; ?>">
@@ -145,21 +214,21 @@
 
           <div class="form-group">
             <label>Current Status</label>
-              <select class="form-control modern-input" name="status" style="height: 45px;">
+              <select class="form-control modern-input" name="status">
                 <option <?php if($location['status'] === '1') echo 'selected'; ?> value="1">Active (Available)</option>
                 <option <?php if($location['status'] === '0') echo 'selected'; ?> value="0">Inactive (Blocked)</option>
               </select>
           </div>
 
           <button type="submit" name="edit_loc" class="btn-update-loc">
-            Apply Changes
+            Apply Sector Changes
           </button>
         </form>
       </div>
     </div>
     
     <a href="locations.php" class="back-link">
-      <i class="glyphicon glyphicon-arrow-left"></i> Cancel and Return
+      <i class="glyphicon glyphicon-arrow-left"></i> Cancel and Return to Locations
     </a>
   </div>
 </div>

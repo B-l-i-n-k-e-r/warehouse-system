@@ -46,77 +46,135 @@
 <style>
   :root {
     --primary: #6366f1;
-    --slate-100: #f1f5f9;
-    --slate-700: #334155;
+    --accent: #38bdf8;
+    --dark-bg: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+    --border: rgba(99, 102, 241, 0.2);
+  }
+
+  body {
+    background-color: var(--dark-bg);
+    background-image: radial-gradient(circle at 2px 2px, rgba(99, 102, 241, 0.05) 1px, transparent 0);
+    background-size: 40px 40px;
+    color: var(--text-main);
   }
 
   .settings-card {
-    background: #ffffff;
-    border-radius: 16px;
-    border: none;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
     margin-bottom: 30px;
-    padding: 25px;
+    padding: 30px;
+    transition: transform 0.3s ease;
   }
 
   .settings-title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    color: var(--slate-700);
-    margin-bottom: 20px;
+    color: var(--accent);
+    margin-bottom: 25px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   /* Custom File Upload Styling */
   .custom-file-upload {
-    display: inline-block;
-    padding: 8px 16px;
+    display: block;
+    padding: 15px;
     cursor: pointer;
-    background: var(--slate-100);
-    border-radius: 8px;
-    border: 1px dashed #cbd5e1;
-    color: #64748b;
-    font-weight: 500;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 12px;
+    border: 2px dashed var(--border);
+    color: var(--text-dim);
+    font-weight: 600;
     transition: all 0.2s;
-    width: 100%;
     text-align: center;
+    margin-bottom: 15px;
   }
-  .custom-file-upload:hover { background: #e2e8f0; }
+  
+  .custom-file-upload:hover { 
+    background: rgba(99, 102, 241, 0.1); 
+    border-color: var(--primary);
+    color: #fff;
+  }
 
   .profile-preview {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border: 4px solid var(--card-bg);
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    background: var(--dark-bg);
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
   }
 
   .form-control {
+    background: var(--dark-bg) !important;
+    border: 1px solid var(--border);
     border-radius: 10px;
-    height: 45px;
-    border: 1.5px solid #e2e8f0;
+    height: 50px;
+    color: #fff !important;
+    transition: all 0.3s;
   }
 
   .form-control:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    outline: none;
   }
 
   .btn-update {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
     border: none;
     border-radius: 10px;
-    font-weight: 600;
-    padding: 10px 25px;
+    font-weight: 800;
+    padding: 12px 30px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     transition: all 0.3s;
   }
-  .btn-update:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+  
+  .btn-update:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+    filter: brightness(1.1);
+  }
+
+  .btn-upload {
+    background: var(--accent);
+    color: var(--dark-bg);
+    font-weight: 800;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    transition: 0.3s;
+  }
+
+  .btn-upload:hover {
+    background: #fff;
+    box-shadow: 0 0 15px var(--accent);
+  }
+
+  hr { border-top: 1px solid var(--border); }
 </style>
 
-<div class="container-fluid" style="padding: 30px;">
+<div class="container-fluid" style="padding: 40px;">
   <div class="row">
     <div class="col-md-12">
       <?php echo display_msg($msg); ?>
@@ -124,53 +182,58 @@
   </div>
 
   <div class="row">
-    <div class="col-md-5">
-      <div class="settings-card">
+    <div class="col-md-4">
+      <div class="settings-card text-center">
         <div class="settings-title">
-          <i class="glyphicon glyphicon-camera" style="color: var(--primary);"></i> 
-          Profile Image
+          <i class="glyphicon glyphicon-camera"></i> 
+          Identity
         </div>
-        <div class="text-center">
-          <img class="profile-preview mb-4" src="uploads/users/<?php echo $user['image'];?>" alt="Current Profile">
-          
-          <form action="edit_account.php" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-              <label for="file_upload" class="custom-file-upload">
-                <i class="glyphicon glyphicon-cloud-upload"></i> Choose New Photo
-              </label>
-              <input type="file" name="file_upload" id="file_upload" style="display:none;"/>
-            </div>
-            <input type="hidden" name="user_id" value="<?php echo $user['id'];?>">
-            <button type="submit" name="submit" class="btn btn-warning btn-block" style="border-radius:10px; font-weight:600;">
-              Upload & Update
-            </button>
-          </form>
-        </div>
+        
+        <img class="profile-preview mb-4" src="uploads/users/<?php echo $user['image'];?>" alt="Current Profile">
+        
+        <form action="edit_account.php" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="file_upload" class="custom-file-upload">
+              <i class="glyphicon glyphicon-picture"></i> Choose New Photo
+            </label>
+            <input type="file" name="file_upload" id="file_upload" style="display:none;"/>
+          </div>
+          <input type="hidden" name="user_id" value="<?php echo $user['id'];?>">
+          <button type="submit" name="submit" class="btn btn-block btn-upload">
+            Apply New Image
+          </button>
+        </form>
       </div>
     </div>
 
-    <div class="col-md-7">
+    <div class="col-md-8">
       <div class="settings-card">
         <div class="settings-title">
-          <i class="glyphicon glyphicon-user" style="color: var(--primary);"></i> 
-          Account Details
+          <i class="glyphicon glyphicon-edit"></i> 
+          Profile Credentials
         </div>
         <form method="post" action="edit_account.php?id=<?php echo (int)$user['id'];?>">
-          <div class="form-group">
-            <label class="text-muted small fw-bold text-uppercase">Display Name</label>
-            <input type="text" class="form-control" name="name" value="<?php echo remove_junk(ucwords($user['name'])); ?>">
-          </div>
-          <div class="form-group">
-            <label class="text-muted small fw-bold text-uppercase">Username</label>
-            <input type="text" class="form-control" name="username" value="<?php echo remove_junk($user['username']); ?>">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Full Display Name</label>
+                <input type="text" class="form-control" name="name" value="<?php echo remove_junk(ucwords($user['name'])); ?>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>System Username</label>
+                <input type="text" class="form-control" name="username" value="<?php echo remove_junk($user['username']); ?>">
+              </div>
+            </div>
           </div>
           
-          <hr style="border-top: 1px solid #f1f5f9; margin: 25px 0;">
+          <hr style="margin: 30px 0;">
           
           <div class="d-flex justify-content-between align-items-center">
-            <button type="submit" name="update" class="btn btn-primary btn-update">Save Changes</button>
-            <a href="change_password.php" class="btn btn-link text-danger fw-bold" style="text-decoration:none;">
-              <i class="glyphicon glyphicon-lock"></i> Change Password
+            <button type="submit" name="update" class="btn btn-update">Save Profile Changes</button>
+            <a href="change_password.php" class="text-danger fw-bold" style="text-decoration:none; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+              <i class="glyphicon glyphicon-lock"></i> UPDATE PASSWORD
             </a>
           </div>
         </form>
@@ -180,12 +243,14 @@
 </div>
 
 <script>
-  // Simple JS to show filename after selection
+  // UI Interaction for File Selection
   document.getElementById('file_upload').onchange = function () {
     const label = document.querySelector('.custom-file-upload');
-    label.innerHTML = `<i class="glyphicon glyphicon-check"></i> File Selected: ` + this.files[0].name;
-    label.style.borderColor = "#10b981";
-    label.style.color = "#10b981";
+    const fileName = this.files[0].name;
+    label.innerHTML = `<i class="glyphicon glyphicon-ok" style="color:var(--accent)"></i> Ready: ` + fileName;
+    label.style.borderColor = "var(--accent)";
+    label.style.color = "#fff";
+    label.style.background = "rgba(56, 189, 248, 0.1)";
   };
 </script>
 

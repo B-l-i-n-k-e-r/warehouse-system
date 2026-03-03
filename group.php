@@ -7,86 +7,141 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
-  .modern-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: none;
-    margin-bottom: 30px;
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --neon-green: #10b981;
+    --neon-red: #f43f5e;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
   }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
+  .modern-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
   .modern-header {
     padding: 20px 25px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--glass-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
+
   .modern-header h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 700;
-    color: #333;
+    color: var(--text-main);
   }
+
+  /* Table Fit Content & Glass Style */
   .table-clean {
     margin-bottom: 0;
+    width: auto !important;
+    min-width: 100%;
+    background: transparent !important;
   }
+
   .table-clean thead th {
-    background-color: #fafafa;
-    border-top: none !important;
-    border-bottom: 2px solid #eee !important;
-    color: #888;
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: none !important;
+    color: var(--neon-blue);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 11px;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     padding: 15px !important;
   }
+
   .table-clean tbody td {
     padding: 15px !important;
     vertical-align: middle !important;
-    border-top: 1px solid #f5f5f5 !important;
+    border-top: 1px solid var(--glass-border) !important;
+    color: var(--text-main);
+    background: transparent !important;
   }
+
+  .table-clean tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+
+  /* Status Badges */
   .badge-pill {
     padding: 5px 12px;
     border-radius: 50px;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+  .badge-active { 
+    background: rgba(16, 185, 129, 0.15); 
+    color: var(--neon-green); 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+  .badge-deactive { 
+    background: rgba(244, 63, 94, 0.15); 
+    color: var(--neon-red); 
+    border: 1px solid rgba(244, 63, 94, 0.3);
+  }
+
+  /* Group Level Label */
+  .level-tag {
+    background: rgba(56, 189, 248, 0.1) !important;
+    color: var(--neon-blue) !important;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
     font-size: 11px;
   }
-  .badge-active { background-color: #e8f5e9; color: #2e7d32; }
-  .badge-deactive { background-color: #ffebee; color: #c62828; }
-  
+
+  /* Buttons */
   .action-btn {
     width: 32px;
     height: 32px;
-    padding: 0;
-    line-height: 32px;
     border-radius: 8px;
-    transition: all 0.2s;
     border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
+  .btn-warning.action-btn { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+  .btn-danger.action-btn { background: rgba(244, 63, 94, 0.2); color: var(--neon-red); }
+  .action-btn:hover { transform: scale(1.1); filter: brightness(1.2); }
+
   .btn-add {
-    background: #4f46e5;
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9);
     color: #fff;
+    border: none;
     border-radius: 8px;
     padding: 8px 16px;
-    font-weight: 600;
-    transition: all 0.3s;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(48, 33, 250, 0.42);
   }
-  .btn-add:hover { background: #4338ca; color: #fff; transform: translateY(-1px); }
+  .btn-add:hover { color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); }
 
-  /* Back Link Style from Add Group Page */
   .back-link {
     display: block;
     text-align: center;
-    margin-top: 20px;
-    color: #94a3b8;
-    text-decoration: none;
-    font-weight: 500;
+    margin-top: 30px;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: 0.3s;
   }
-  .back-link:hover { 
-    color: #4f46e5; 
-    text-decoration: none;
-  }
+  .back-link:hover { color: var(--neon-blue); text-decoration: none; }
 </style>
 
 <div class="container-fluid">
@@ -100,7 +155,7 @@
     <div class="col-md-12">
       <div class="modern-card">
         <div class="modern-header">
-          <h2><i class="glyphicon glyphicon-th-list" style="margin-right: 10px; color: #4f46e5;"></i> User Groups</h2>
+          <h2><i class="glyphicon glyphicon-th-list" style="margin-right: 10px; color: var(--neon-blue);"></i> User Groups</h2>
           <a href="add_group.php" class="btn btn-add">
             <i class="glyphicon glyphicon-plus"></i> Add New Group
           </a>
@@ -121,10 +176,10 @@
               <tbody>
                 <?php foreach($all_groups as $a_group): ?>
                   <tr>
-                    <td class="text-center text-muted"><?php echo count_id();?></td>
-                    <td><strong><?php echo remove_junk(ucwords($a_group['group_name']))?></strong></td>
+                    <td class="text-center text-muted" style="font-family: monospace;"><?php echo count_id();?></td>
+                    <td><strong style="color: #fff;"><?php echo remove_junk(ucwords($a_group['group_name']))?></strong></td>
                     <td class="text-center">
-                      <span class="label label-default" style="background:#f0f0f0; color:#666; border-radius:4px;">
+                      <span class="level-tag">
                         Level <?php echo remove_junk(ucwords($a_group['group_level']))?>
                       </span>
                     </td>
@@ -140,7 +195,7 @@
                         <a href="edit_group.php?id=<?php echo (int)$a_group['id'];?>" class="btn btn-warning action-btn" data-toggle="tooltip" title="Edit">
                           <i class="glyphicon glyphicon-pencil"></i>
                         </a>
-                        <a href="delete_group.php?id=<?php echo (int)$a_group['id'];?>" class="btn btn-danger action-btn" style="margin-left: 5px;" data-toggle="tooltip" title="Remove">
+                        <a href="delete_group.php?id=<?php echo (int)$a_group['id'];?>" class="btn btn-danger action-btn" style="margin-left: 8px;" data-toggle="tooltip" title="Remove">
                           <i class="glyphicon glyphicon-trash"></i>
                         </a>
                       </div>
@@ -157,7 +212,7 @@
   
   <div class="row">
     <div class="col-md-12">
-      <a href="home.php" class="back-link">
+      <a href="admin.php" class="back-link">
         <i class="glyphicon glyphicon-arrow-left"></i> Back to Dashboard
       </a>
     </div>

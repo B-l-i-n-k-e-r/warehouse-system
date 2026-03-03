@@ -1,23 +1,28 @@
 <style>
-  /* Ensuring consistency with the main theme */
+  /* --- MoonLit Special Menu Styling --- */
   .sidebar-menu {
     list-style: none;
-    padding: 0;
+    padding: 10px 0;
     margin: 0;
-    background-color: #1a1d21;
+    background-color: #0f172a; /* Deep MoonLit Slate */
     min-height: 100vh;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .sidebar-menu li {
+    margin: 4px 12px;
   }
 
   .sidebar-menu li a {
-    display: block;
-    padding: 15px 25px;
-    color: #aeb7c2;
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    color: #94a3b8;
     text-decoration: none;
     font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     /* Custom instruction: fit content regardless of window size */
     white-space: nowrap;
     width: fit-content;
@@ -25,80 +30,81 @@
   }
 
   .sidebar-menu li a i.glyphicon {
-    margin-right: 15px;
-    font-size: 16px;
-    color: #3498db; /* Blue accent */
+    margin-right: 14px;
+    font-size: 18px;
+    color: #0099ff; /* Electric Blue accent */
   }
 
   .sidebar-menu li a:hover {
-    background-color: #252a30;
+    background-color: rgba(0, 153, 255, 0.08);
     color: #ffffff;
-    padding-left: 30px;
-    border-left: 3px solid #3498db;
+    padding-left: 25px;
+  }
+
+  /* Active State for Special User */
+  .sidebar-menu li a.active-link {
+    background: rgba(0, 153, 255, 0.15);
+    color: #fff;
+    border-left: 4px solid #0099ff;
   }
 
   /* Submenu Style */
   .submenu {
     display: none;
-    background-color: #111417;
+    background-color: rgba(255, 255, 255, 0.02);
     list-style: none;
-    padding: 0;
+    padding: 5px 0;
+    margin: 5px 0 10px 0;
+    border-radius: 12px;
   }
 
   .submenu li a {
-    padding: 10px 10px 10px 55px;
+    padding: 10px 15px 10px 52px;
     font-size: 13px;
-    color: #8a94a1;
-    border-left: none;
+    color: #64748b;
   }
 
   .submenu li a:hover {
-    color: #3498db;
-    padding-left: 60px;
+    background: transparent;
+    color: #0099ff;
+    padding-left: 58px;
   }
 
   .arrow {
-    float: right;
+    margin-left: auto;
     font-size: 10px !important;
-    margin-top: 5px;
     transition: transform 0.3s;
+    opacity: 0.6;
   }
 
-  .submenu-toggle.active .arrow {
+  .active .arrow {
     transform: rotate(90deg);
+    opacity: 1;
   }
 </style>
 
 <ul class="sidebar-menu">
   <li>
-    <a href="home.php">
+    <a href="home.php" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'home.php') ? 'active-link' : ''; ?>">
       <i class="glyphicon glyphicon-home"></i>
-      <span>Dashboard</span>
+      <span>Home Dashboard</span>
     </a>
   </li>
 
   <li>
-    <a href="#" class="submenu-toggle">
+    <a href="#" class="submenu-toggle <?php echo (in_array(basename($_SERVER['PHP_SELF']), ['product.php', 'add_product.php'])) ? 'active' : ''; ?>">
       <i class="glyphicon glyphicon-th-large"></i>
-      <span>Products</span>
+      <span>Inventory Control</span>
       <i class="glyphicon glyphicon-menu-right arrow"></i>
     </a>
-    <ul class="nav submenu">
-       <li><a href="product.php">Manage Products</a></li>
-       <li><a href="add_product.php">Add Product</a></li>
+    <ul class="nav submenu" style="<?php echo (in_array(basename($_SERVER['PHP_SELF']), ['product.php', 'add_product.php'])) ? 'display:block;' : ''; ?>">
+       <li><a href="product.php"><i class="glyphicon glyphicon-record" style="font-size:8px; margin-right:10px;"></i> Browse Products</a></li>
+       <li><a href="add_product.php"><i class="glyphicon glyphicon-record" style="font-size:8px; margin-right:10px;"></i> Add New Item</a></li>
     </ul>
   </li>
 
-  <li>
-    <a href="media.php">
-      <i class="glyphicon glyphicon-picture"></i>
-      <span>Media Gallery</span>
-    </a>
-  </li>
-</ul>
-
 <script>
-  // Script to handle the toggle for Special User Menu
+  // Handlers for Special User Submenus
   document.querySelectorAll('.submenu-toggle').forEach(item => {
     item.addEventListener('click', event => {
       event.preventDefault();

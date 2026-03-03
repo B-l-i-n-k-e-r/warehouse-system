@@ -10,13 +10,13 @@ if (isset($_POST['submit'])) {
     $req_dates = array('start-date', 'end-date');
     validate_fields($req_dates);
 
-    if (empty($errors)):
+    if (empty($errors)) {
         $start_date  = remove_junk($db->escape($_POST['start-date']));
         $end_date    = remove_junk($db->escape($_POST['end-date']));
         $location_id = isset($_POST['location_id']) ? remove_junk($db->escape($_POST['location_id'])) : '';
 
         $sql  = "SELECT s.date, p.name, p.sale_price, p.buy_price, s.qty, l.location_name, ";
-        $sql .= " (s.qty * p.sale_price) AS total_saleing_price, ";
+        $sql .= " (s.qty * p.sale_price) AS total_selling_price, ";
         $sql .= " (s.qty * p.buy_price) AS total_buying_price ";
         $sql .= " FROM sales s ";
         $sql .= " LEFT JOIN products p ON s.product_id = p.id ";
@@ -29,12 +29,18 @@ if (isset($_POST['submit'])) {
 
         $sql .= " ORDER BY s.date DESC";
         $results = find_by_sql($sql);
-    else:
+
+        // Validation: Redirect if no results found
+        if (empty($results)) {
+            $session->msg("w", "No sales records found for the selected criteria.");
+            redirect('sales_report.php', false);
+        }
+    } else {
         $session->msg("d", $errors);
         redirect('sales_report.php', false);
-    endif;
+    }
 } else {
-    $session->msg("d", "Select dates");
+    $session->msg("d", "Please select a date range to generate a report.");
     redirect('sales_report.php', false);
 }
 ?>
@@ -43,135 +49,184 @@ if (isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Report | <?php echo $start_date; ?> to <?php echo $end_date; ?></title>
+    <title>MoonLit Report | <?php echo $start_date; ?> - <?php echo $end_date; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #6366f1;
-            --success: #10b981;
-            --danger: #ef4444;
-            --slate-800: #1e293b;
+            --primary: #38bdf8; 
+            --accent: #22c55e;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(56, 189, 248, 0.2);
         }
+
         body {
-            background-color: #f1f5f9;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 2px 2px, rgba(56, 189, 248, 0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            color: var(--slate-800);
             padding: 40px 20px;
         }
+
         .report-container {
-            max-width: 1140px;
+            width: 100%;
+            max-width: 1400px;
             margin: auto;
         }
+
         .report-card {
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            padding: 40px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
+
+        .report-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
         .report-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 30px;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--border);
         }
+
         .company-logo {
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: -1px;
-            color: var(--primary);
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        .summary-item {
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid #f1f5f9;
-            background: #f8fafc;
-        }
-        .summary-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #64748b;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .summary-value {
+            font-weight: 900;
             font-size: 26px;
-            font-weight: 800;
-            display: block;
-        }
-        
-        /* Table column fit content logic */
-        .table thead th {
-            background-color: #f8fafc;
-            border-bottom: 2px solid #e2e8f0;
-            color: #64748b;
-            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 15px;
-            white-space: nowrap;
-            width: 1%; /* Forces columns to shrink to content */
         }
-        
-        /* Allow product description to take remaining space */
-        .table thead th:nth-child(2) {
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+        }
+
+        .table {
+            color: var(--text-main);
+            border-color: var(--border);
+            width: 100%;
+            table-layout: auto; 
+            margin-bottom: 0;
+        }
+
+        .table thead th, 
+        .table tbody td {
+            white-space: nowrap;
+            width: 1%;
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+        .table .col-desc {
             width: auto;
             white-space: normal;
+            min-width: 250px;
+        }
+
+        .table thead th {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--primary);
         }
 
         .table tbody td {
-            padding: 18px 15px;
-            border-bottom: 1px solid #f1f5f9;
-            white-space: nowrap;
-        }
-        
-        .table tbody td:nth-child(2) {
-            white-space: normal;
+            border-bottom: 1px solid var(--border);
         }
 
-        .badge-location {
-            background: #eef2ff;
-            color: #4338ca;
-            font-size: 11px;
+        .product-name {
             font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 6px;
+            color: #fff;
+            display: block;
         }
-        .profit-pos { color: var(--success); }
-        .profit-neg { color: var(--danger); }
 
-        .back-link {
-            display: inline-block;
-            text-align: center;
-            margin-top: 30px;
-            color: #94a3b8;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-            cursor: pointer;
-            border: none;
-            background: none;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .back-link:hover {
+
+        .summary-item {
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--border);
+        }
+
+        .summary-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
             color: var(--primary);
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
+            display: block;
         }
-        
+
+        .summary-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .badge-loc {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .profit-up { color: var(--accent); font-weight: 800; }
+        .profit-down { color: #f87171; font-weight: 800; }
+
+        .btn-print {
+            background: var(--primary);
+            color: var(--dark-bg);
+            font-weight: 800;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn-print:hover {
+            background: #fff;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
         @media print {
-            body { background: white; padding: 0; }
-            .report-card { border: none; box-shadow: none; padding: 0; }
-            .no-print { display: none; }
-            .summary-item { border: 1px solid #eee; background: white !important; }
+            body { background: #fff !important; color: #000 !important; padding: 0; }
+            .report-card { border: 1px solid #ddd; box-shadow: none; background: #fff !important; }
+            .report-card::before, .no-print { display: none; }
+            .summary-item { background: #f8fafc !important; border: 1px solid #ddd !important; }
+            .summary-value, .product-name { color: #000 !important; }
+            .table thead th { color: #444 !important; background: #eee !important; }
         }
     </style>
 </head>
@@ -181,7 +236,7 @@ if (isset($_POST['submit'])) {
     $grand_total = 0;
     $total_cost = 0;
     foreach($results as $r) {
-        $grand_total += $r['total_saleing_price'];
+        $grand_total += $r['total_selling_price'];
         $total_cost += $r['total_buying_price'];
     }
     $total_profit = $grand_total - $total_cost;
@@ -190,67 +245,72 @@ if (isset($_POST['submit'])) {
         <div class="report-card">
             <header class="report-header">
                 <div>
-                    <div class="company-logo">MOONLIT <span style="color:#94a3b8">LOGISTICS</span></div>
-                    <h1 class="h4 fw-bold mt-2">Sales Analysis Report</h1>
-                    <p class="text-muted small mb-0">
-                        Generated on: <strong><?php echo date("d M Y"); ?></strong> at <strong><?php echo date("h:i A"); ?></strong>
-                    </p>
+                    <div class="company-logo">MoonLit <span style="color:var(--text-dim)">Systems</span></div>
+                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 5px;">
+                        GENERATED ON: <?php echo date("Y-m-d H:i"); ?>
+                    </div>
                 </div>
                 <div class="text-end">
-                    <span class="badge bg-dark rounded-pill px-3 py-2">
-                        Date: <?php echo date("d/m/y", strtotime($start_date)); ?> - <?php echo date("d/m/y", strtotime($end_date)); ?>
-                    </span>
-                    <?php if(!empty($location_id)): ?>
-                        <div class="mt-2 small fw-bold text-uppercase text-primary">
-                            Site: <?php echo remove_junk($results[0]['location_name']); ?>
-                        </div>
-                    <?php endif; ?>
+                    <div style="font-size: 10px; font-weight: 800; color: var(--primary);">DATE RANGE</div>
+                    <div style="font-weight: 700; letter-spacing: 1px;">
+                        <?php echo strtoupper(date("d M Y", strtotime($start_date))); ?> — <?php echo strtoupper(date("d M Y", strtotime($end_date))); ?>
+                    </div>
                 </div>
             </header>
 
             <div class="summary-grid">
                 <div class="summary-item">
                     <span class="summary-label">Total Revenue</span>
-                    <span class="summary-value text-dark">Ksh <?php echo number_format($grand_total, 2); ?></span>
+                    <span class="summary-value">Ksh <?php echo number_format($grand_total, 2); ?></span>
                 </div>
                 <div class="summary-item">
                     <span class="summary-label">Total Buying Cost</span>
-                    <span class="summary-value text-muted">Ksh <?php echo number_format($total_cost, 2); ?></span>
+                    <span class="summary-value" style="color: var(--text-dim);">Ksh <?php echo number_format($total_cost, 2); ?></span>
                 </div>
-                <div class="summary-item" style="background: #ecfdf5; border-color: #a7f3d0;">
-                    <span class="summary-label" style="color: #059669;">Net Profit</span>
-                    <span class="summary-value" style="color: #059669;">Ksh <?php echo number_format($total_profit, 2); ?></span>
+                <div class="summary-item" style="border-color: var(--accent);">
+                    <span class="summary-label" style="color: var(--accent);">Net Profit</span>
+                    <span class="summary-value" style="color: var(--accent);">Ksh <?php echo number_format($total_profit, 2); ?></span>
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Product Description</th>
+                            <th class="col-desc">Product Description</th>
                             <th>Location</th>
                             <th class="text-end">Unit Price</th>
-                            <th class="text-center">Qty</th>
-                            <th class="text-end">Total Sale</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-end">Total Sales</th>
                             <th class="text-end">Profit</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach($results as $result): 
-                            $profit = $result['total_saleing_price'] - $result['total_buying_price'];
+                            $profit = $result['total_selling_price'] - $result['total_buying_price'];
                         ?>
                         <tr>
-                            <td class="text-muted small"><?php echo date("d/m/y", strtotime($result['date']));?></td>
-                            <td>
-                                <div class="fw-bold"><?php echo remove_junk(ucfirst($result['name']));?></div>
+                            <td style="color: var(--text-dim); font-size: 11px;">
+                                <?php echo date("d.m.y", strtotime($result['date']));?>
                             </td>
-                            <td><span class="badge-location"><?php echo remove_junk($result['location_name']);?></span></td>
-                            <td class="text-end text-muted small">Ksh <?php echo number_format($result['sale_price'], 2);?></td>
+                            <td class="col-desc">
+                                <span class="product-name"><?php echo strtoupper(remove_junk($result['name']));?></span>
+                            </td>
+                            <td><span class="badge-loc"><?php echo strtoupper($result['location_name']);?></span></td>
+                            
+                            <td class="text-end" style="color: var(--text-dim);">
+                                Ksh <?php echo number_format($result['sale_price'], 0);?>
+                            </td>
+                            
                             <td class="text-center fw-bold"><?php echo (int)$result['qty'];?></td>
-                            <td class="text-end fw-bold">Ksh <?php echo number_format($result['total_saleing_price'], 2);?></td>
-                            <td class="text-end fw-bold <?php echo ($profit >= 0) ? 'profit-pos' : 'profit-neg'; ?>">
-                                Ksh <?php echo number_format($profit, 2);?>
+                            
+                            <td class="text-end" style="color: var(--primary); font-weight: 700;">
+                                Ksh <?php echo number_format($result['total_selling_price'], 0);?>
+                            </td>
+                            
+                            <td class="text-end <?php echo ($profit >= 0) ? 'profit-up' : 'profit-down'; ?>">
+                                <?php echo ($profit >= 0 ? '+ Ksh ' : '- Ksh ') . number_format(abs($profit), 0);?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -259,29 +319,16 @@ if (isset($_POST['submit'])) {
             </div>
 
             <div class="mt-5 d-flex justify-content-between align-items-center no-print">
-                <div>
-                    <button class="btn btn-light border px-4 me-2" onclick="window.print()">
-                        Export PDF
-                    </button>
-                    <button class="btn btn-primary px-4 fw-bold" onclick="window.print()">
-                        Print Report
-                    </button>
-                </div>
+                <a href="sales_report.php" style="color: var(--text-dim); text-decoration: none; font-size: 12px; font-weight: 700;">
+                    &larr; Back to Generator
+                </a>
+                <button class="btn-print" onclick="window.print()">
+                    Print Final Report
+                </button>
             </div>
         </div>
-        
-        <div class="text-center no-print">
-            <button onclick="window.history.back()" class="back-link">
-                ← Go Back to Previous Page
-            </button>
-        </div>
     </div>
-<?php 
-    else:
-        $session->msg("d", "Sorry, no sales found for this period/location.");
-        redirect('sales_report.php', false);
-    endif;
-?>
+<?php endif; ?>
 
 </body>
 </html>

@@ -46,12 +46,19 @@
 
 <?php include_once('layouts/header.php'); ?>
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: rgba(15, 23, 42, 0.5);
+  }
+
   body {
-    background: linear-gradient(135deg,#f8fafc,#eef2ff);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
   }
 
   .edit-container {
@@ -59,77 +66,107 @@
   }
 
   .glass-card {
-    background: rgba(255,255,255,0.85);
+    background: var(--glass-bg);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.6);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
     padding: 40px;
-    transition: 0.3s ease;
-  }
-
-  .glass-card:hover {
-    transform: translateY(-4px);
+    max-width: 550px;
+    margin: 0 auto;
+    width: auto !important; /* Fit content rule */
   }
 
   .page-title {
     font-weight: 800;
     font-size: 1.8rem;
     margin-bottom: 30px;
-    color: #0f172a;
+    color: var(--text-main);
   }
 
   .form-label-modern {
     font-size: 0.75rem;
     font-weight: 700;
-    color: #64748b;
+    color: var(--neon-blue);
     text-transform: uppercase;
-    margin-bottom: 8px;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
     display: block;
   }
 
   .form-control-modern {
+    background: var(--input-bg) !important;
     height: 50px;
     border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
+    border: 1px solid var(--glass-border);
     padding: 12px 16px;
-    transition: 0.2s;
+    color: #fff !important;
+    transition: 0.3s ease;
     width: 100%;
   }
 
   .form-control-modern:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+    border-color: var(--neon-blue) !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
     outline: none;
+    transform: translateY(-1px);
   }
 
   .btn-modern {
     height: 52px;
     border-radius: 14px;
     border: none;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1rem;
-    background: linear-gradient(135deg,#6366f1,#4f46e5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9);
     color: white;
-    box-shadow: 0 8px 20px rgba(99,102,241,0.3);
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
     transition: 0.3s;
     width: 100%;
+    margin-top: 20px;
   }
 
   .btn-modern:hover {
     transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(14, 165, 233, 0.5);
+    filter: brightness(1.1);
   }
 
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 25px;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .back-link:hover {
+    color: var(--neon-blue);
+    text-decoration: none;
+    transform: translateX(-5px);
+  }
+
+  select.form-control-modern option {
+    background: #1e293b;
+    color: #fff;
+  }
 </style>
 
 <div class="container edit-container">
   <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-12">
 
       <div class="glass-card">
 
         <div class="text-center">
-          <div class="page-title">Edit Group</div>
+          <div class="page-title">
+            <i class="glyphicon glyphicon-pencil" style="color: var(--neon-blue); font-size: 22px; margin-right: 10px;"></i>
+            Edit Group
+          </div>
         </div>
 
         <?php echo display_msg($msg); ?>
@@ -171,6 +208,10 @@
         </form>
 
       </div>
+
+      <a href="group.php" class="back-link">
+        <i class="glyphicon glyphicon-arrow-left"></i> Back to All Groups
+      </a>
 
     </div>
   </div>

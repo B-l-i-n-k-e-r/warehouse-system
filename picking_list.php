@@ -25,43 +25,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Libre+Barcode+128&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1a1d21;
-            --accent-color: #4f46e5;
+            --primary-color: #1e293b;
+            --accent-color: #38bdf8; /* Neon Blue */
             --border-color: #e2e8f0;
+            --success-green: #10b981;
+            --dark-bg: #0f172a;
         }
         body { 
             font-family: 'Inter', sans-serif; 
-            padding: 20px; 
+            padding: 40px 20px; 
             color: var(--primary-color);
             line-height: 1.4;
-            background-color: #f1f5f9;
+            background-color: var(--dark-bg);
         }
         .paper {
             background: #fff;
             max-width: 850px;
             margin: 0 auto;
             padding: 50px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             position: relative;
             border-top: 8px solid var(--accent-color);
+            border-radius: 4px;
         }
         
-        /* Barcode Simulation */
         .barcode {
             font-family: 'Libre Barcode 128', cursive;
-            font-size: 45px;
+            font-size: 55px;
             margin-top: -10px;
+            color: #000;
         }
 
         .header-flex { 
             display: flex; 
             justify-content: space-between; 
-            border-bottom: 2px solid var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
-        .title-area h1 { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -1px; }
-        .title-area p { margin: 5px 0 0 0; color: #64748b; font-weight: 600; }
+        .title-area h1 { margin: 0; font-size: 38px; font-weight: 900; letter-spacing: -1.5px; }
+        .title-area p { margin: 5px 0 0 0; color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
 
         .meta-grid {
             display: grid;
@@ -75,16 +78,17 @@
             border-radius: 8px;
             border: 1px solid var(--border-color);
         }
-        .meta-label { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; margin-bottom: 5px; display: block; }
-        .meta-value { font-size: 14px; font-weight: 700; }
+        .meta-label { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 800; margin-bottom: 5px; display: block; }
+        .meta-value { font-size: 14px; font-weight: 800; color: #1e293b; }
 
         .instruction-box {
-            background: #fffbeb;
-            border-left: 4px solid #f59e0b;
+            background: #f0f9ff;
+            border-left: 5px solid var(--accent-color);
             padding: 15px 20px;
             margin-bottom: 30px;
-            font-size: 12px;
-            color: #92400e;
+            font-size: 13px;
+            color: #0369a1;
+            font-weight: 500;
         }
 
         .pick-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
@@ -95,6 +99,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             border-bottom: 2px solid var(--primary-color);
+            background: #f8fafc;
         }
         .pick-table td { 
             padding: 25px 15px;
@@ -106,76 +111,117 @@
             background: var(--primary-color);
             color: #fff;
             padding: 15px;
-            border-radius: 6px;
+            border-radius: 10px;
             text-align: center;
         }
-        .loc-zone { font-size: 10px; opacity: 0.7; display: block; margin-bottom: 2px; }
-        .loc-name { font-size: 22px; font-weight: 900; display: block; }
+        .loc-zone { font-size: 11px; font-weight: 800; color: var(--accent-color); display: block; margin-bottom: 2px; }
+        .loc-name { font-size: 24px; font-weight: 900; display: block; letter-spacing: 1px; }
 
         .qty-box {
-            font-size: 36px;
+            font-size: 42px;
             font-weight: 900;
             text-align: center;
-            color: var(--accent-color);
-            border: 2px solid var(--accent-color);
-            width: 70px;
-            height: 70px;
-            line-height: 70px;
-            border-radius: 12px;
+            color: #000;
+            border: 4px solid #000;
+            width: 80px;
+            height: 80px;
+            line-height: 72px;
+            border-radius: 15px;
             margin: 0 auto;
         }
 
         .check-square {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border: 3px solid #cbd5e1;
-            border-radius: 8px;
+            border-radius: 10px;
             margin: 0 auto;
         }
 
         .footer-sig {
-            margin-top: 50px;
+            margin-top: 60px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 50px;
         }
         .sig-box {
-            border-top: 1px solid var(--primary-color);
+            border-top: 2px solid var(--primary-color);
             padding-top: 10px;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
             color: #64748b;
             text-transform: uppercase;
         }
 
-        .btn-print {
+        /* Fixed Navigation Buttons */
+        .nav-controls {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--accent-color);
-            color: white;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .btn-action {
+            text-decoration: none !important;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
             border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 700;
-            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
             cursor: pointer;
-            z-index: 100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        /* Matches your Product Modification / Sales Header Style */
+        .btn-back { 
+            background: #1e293b; 
+            color: #fff; 
+            border: 1px solid rgba(56, 189, 248, 0.2); 
+        }
+        .btn-back:hover { 
+            background: #334155; 
+            transform: translateX(-5px); 
+            border-color: var(--accent-color); 
+            color: var(--accent-color); 
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+        
+        .btn-print { 
+            background: var(--accent-color); 
+            color: #000; 
+        }
+        .btn-print:hover { 
+            background: #7dd3fc; 
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
         }
 
         @media print {
             body { background: white; padding: 0; }
-            .paper { box-shadow: none; max-width: 100%; padding: 0; border: none; }
-            .btn-print { display: none; }
+            .paper { box-shadow: none; max-width: 100%; padding: 0; border: none; margin: 0; }
+            .nav-controls { display: none; }
             .location-box { border: 2px solid #000; color: #000; background: #fff !important; }
+            .loc-zone { color: #000; }
         }
     </style>
 </head>
 <body>
 
-    <button class="btn-print" onclick="window.print()">
-        Print Picking Slip
-    </button>
+    <div class="nav-controls">
+        <a href="sales.php" class="btn-action btn-back">
+            <i class="glyphicon glyphicon-arrow-left"></i> BACK TO SALES
+        </a>
+        <button class="btn-action btn-print" onclick="window.print()">
+            <i class="glyphicon glyphicon-print"></i> PRINT PICKING SLIP
+        </button>
+    </div>
 
     <div class="paper">
         <div class="header-flex">
@@ -185,7 +231,7 @@
             </div>
             <div style="text-align: right;">
                 <div class="barcode">SAL<?php echo $sale_data['id']; ?></div>
-                <div style="font-size: 12px; font-weight: 700; margin-top: -5px;">#SAL-<?php echo $sale_data['id']; ?></div>
+                <div style="font-size: 13px; font-weight: 900; margin-top: -5px; color: var(--primary-color);">REF: #SAL-<?php echo $sale_data['id']; ?></div>
             </div>
         </div>
 
@@ -199,31 +245,31 @@
                 <span class="meta-value">____________________</span>
             </div>
             <div class="meta-item">
-                <span class="meta-label">Print Time</span>
+                <span class="meta-label">System Print Time</span>
                 <span class="meta-value"><?php echo date("H:i:s"); ?></span>
             </div>
         </div>
 
         <div class="instruction-box">
-            <strong>ATTENTION PICKER:</strong> Please verify the Bin Location before picking. Scan the item to confirm SKU match. Ensure fragile items are placed at the top of the bin.
+            <strong>PICKER INSTRUCTIONS:</strong> 1. Verify Bin Location below. 2. Cross-check SKU ending in <strong><?php echo (int)$sale_data['product_id']; ?></strong>. 3. Mark the "Verified" box only after the item is physically in your cart.
         </div>
 
         <table class="pick-table">
             <thead>
                 <tr>
                     <th>Description & Item ID</th>
-                    <th width="200" style="text-align: center;">Location</th>
-                    <th width="100" style="text-align: center;">Quantity</th>
-                    <th width="80" style="text-align: center;">Verified</th>
+                    <th width="220" style="text-align: center;">Location / Bin</th>
+                    <th width="120" style="text-align: center;">Qty to Pick</th>
+                    <th width="100" style="text-align: center;">Verified</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        <div style="font-size: 18px; font-weight: 900; margin-bottom: 5px;">
+                        <div style="font-size: 22px; font-weight: 900; margin-bottom: 8px; color: #000;">
                             <?php echo remove_junk($sale_data['prod_name']); ?>
                         </div>
-                        <span style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #475569;">
+                        <span style="background: #000; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; color: var(--accent-color);">
                             SKU-<?php echo (int)$sale_data['product_id']; ?>
                         </span>
                     </td>
@@ -254,9 +300,9 @@
             </div>
         </div>
 
-        <div style="margin-top: 50px; text-align: center;">
-            <div class="barcode" style="font-size: 30px; opacity: 0.3;">SAL<?php echo $sale_data['id']; ?></div>
-            <p style="font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px;">
+        <div style="margin-top: 70px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 20px;">
+            <div class="barcode" style="font-size: 35px; opacity: 0.2;">SAL<?php echo $sale_data['id']; ?></div>
+            <p style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 3px; font-weight: 700;">
                 Internal Document - MoonLit Logistics Division
             </p>
         </div>

@@ -34,56 +34,140 @@
 
 <style>
   :root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --card-shadow: 0 4px 20px 0 rgba(0,0,0,0.05);
+    --bg-deep: #0f172a;
+    --glass-card: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --neon-green: #10b981;
+    --neon-red: #f43f5e;
+    --neon-yellow: #fbbf24;
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
   }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* --- Dashboard Cards --- */
   .dashboard-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: var(--card-shadow);
+    background: var(--glass-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
     padding: 20px;
     margin-bottom: 20px;
-    transition: transform 0.2s;
-    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   }
-  .dashboard-card:hover { transform: translateY(-5px); }
+
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 15px 35px rgba(56, 189, 248, 0.1);
+  }
+
+  /* --- Glowing Stat Icons --- */
   .stat-icon {
     width: 60px;
     height: 60px;
-    border-radius: 12px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    margin-bottom: 10px;
+    margin: 0 auto 10px;
   }
-  .bg-soft-green { background: #e8f5e9; color: #2e7d32; }
-  .bg-soft-red { background: #ffebee; color: #c62828; }
-  .bg-soft-blue { background: #e3f2fd; color: #1565c0; }
-  .bg-soft-yellow { background: #fffde7; color: #f9a825; }
-  
+
+  .bg-soft-green { background: rgba(16, 185, 129, 0.15); color: var(--neon-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+  .bg-soft-red { background: rgba(244, 63, 94, 0.15); color: var(--neon-red); box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); }
+  .bg-soft-blue { background: rgba(56, 189, 248, 0.15); color: var(--neon-blue); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+  .bg-soft-yellow { background: rgba(251, 191, 36, 0.15); color: var(--neon-yellow); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
+
+  /* --- Notifications --- */
   .modern-alert {
-    border-radius: 8px;
-    border: none;
-    box-shadow: var(--card-shadow);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-primary);
   }
+  .alert-warning { border-left: 4px solid var(--neon-yellow); }
+  .alert-danger { border-left: 4px solid var(--neon-red); }
+
+  /* --- Table Fit-Content & Transparency --- */
+  .table-modern {
+    width: auto !important;
+    min-width: 100%;
+    margin-bottom: 0;
+    background-color: transparent !important;
+  }
+
   .table-modern thead th {
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--neon-blue) !important;
     text-transform: uppercase;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 1px;
-    border-bottom: 2px solid #eee !important;
+    border: none !important;
+    padding: 12px !important;
   }
+
+  .table-modern tbody tr {
+    background: transparent !important;
+    transition: background 0.2s;
+  }
+
+  .table-modern tbody tr td {
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 10px !important;
+    vertical-align: middle !important;
+    color: var(--text-primary) !important;
+    background: transparent !important;
+  }
+
+  .table-modern tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
+
+  /* --- Typography & Links --- */
+  h3, h4 { color: var(--text-primary); font-weight: 700; margin-top: 5px; }
+  .text-muted { color: var(--text-muted) !important; }
+  
+  .table-modern a, .list-group-item a { 
+    color: var(--text-primary) !important; 
+    text-decoration: none; 
+    font-weight: 600;
+  }
+  
+  .table-modern a:hover, .list-group-item a:hover { 
+    color: var(--neon-blue) !important; 
+  }
+
+  hr { border-top: 1px solid var(--glass-border); opacity: 0.3; }
+
+  .label-success { background: var(--neon-green); color: #fff; border: none; }
+  .text-success { color: var(--neon-green) !important; font-weight: bold; }
+
   .img-avatar-small {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
     object-fit: cover;
-    margin-right: 10px;
   }
+
+  .list-group-item {
+    background: transparent !important;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 12px 0;
+    color: var(--text-primary) !important;
+  }
+  .list-group-item:last-child { border-bottom: none !important; }
 </style>
 
 <div class="container-fluid">
@@ -98,7 +182,7 @@
     <div class="col-md-12">
       <div class="alert alert-warning modern-alert" role="alert">
         <span><i class="glyphicon glyphicon-user" style="margin-right:10px;"></i> <strong>Attention:</strong> <?php echo $pending_users; ?> new users are waiting for activation.</span>
-        <a href="users.php?status=0" class="btn btn-warning btn-sm">Review Now</a>
+        <a href="users.php?status=0" class="btn btn-warning btn-sm" style="border-radius:20px; font-weight:bold;">Review Now</a>
       </div>
     </div>
   </div>
@@ -109,7 +193,7 @@
     <div class="col-md-12">
         <div class="alert alert-danger modern-alert">
           <span><i class="glyphicon glyphicon-warning-sign" style="margin-right:10px;"></i> <strong>Warehouse:</strong> <?php echo count($low_stock_list); ?> items are running low on stock.</span>
-          <a href="low_stock_report.php" class="btn btn-danger btn-sm">Check Inventory</a>
+          <a href="low_stock_report.php" class="btn btn-danger btn-sm" style="border-radius:20px; font-weight:bold;">Check Inventory</a>
         </div>
     </div>
   </div>
@@ -118,29 +202,29 @@
   <div class="row">
       <div class="col-md-3">
          <div class="dashboard-card text-center">
-            <div class="stat-icon bg-soft-green center-block"><i class="glyphicon glyphicon-user"></i></div>
-            <h3 class="margin-top"><?php echo $active_count; ?></h3>
+            <div class="stat-icon bg-soft-green"><i class="glyphicon glyphicon-user"></i></div>
+            <h3><?php echo $active_count; ?></h3>
             <p class="text-muted text-uppercase small">Active Users</p>
          </div>
       </div>
       <div class="col-md-3">
          <div class="dashboard-card text-center">
-            <div class="stat-icon bg-soft-red center-block"><i class="glyphicon glyphicon-list"></i></div>
-            <h3 class="margin-top"><?php echo $c_categorie['total']; ?></h3>
+            <div class="stat-icon bg-soft-red"><i class="glyphicon glyphicon-list"></i></div>
+            <h3><?php echo $c_categorie['total']; ?></h3>
             <p class="text-muted text-uppercase small">Categories</p>
          </div>
       </div>
       <div class="col-md-3">
          <div class="dashboard-card text-center">
-            <div class="stat-icon bg-soft-blue center-block"><i class="glyphicon glyphicon-shopping-cart"></i></div>
-            <h3 class="margin-top"><?php echo $c_product['total']; ?></h3>
+            <div class="stat-icon bg-soft-blue"><i class="glyphicon glyphicon-shopping-cart"></i></div>
+            <h3><?php echo $c_product['total']; ?></h3>
             <p class="text-muted text-uppercase small">Products</p>
          </div>
       </div>
       <div class="col-md-3">
          <div class="dashboard-card text-center">
-            <div class="stat-icon bg-soft-yellow center-block"><i class="glyphicon glyphicon-usd"></i></div>
-            <h3 class="margin-top"><?php echo $c_sale['total']; ?></h3>
+            <div class="stat-icon bg-soft-yellow"><i class="glyphicon glyphicon-usd"></i></div>
+            <h3><?php echo $c_sale['total']; ?></h3>
             <p class="text-muted text-uppercase small">Total Sales</p>
          </div>
       </div>
@@ -149,7 +233,7 @@
   <div class="row">
     <div class="col-md-4">
       <div class="dashboard-card">
-        <h4 class="margin-top"><i class="glyphicon glyphicon-fire" style="color:#ff5722"></i> Top Selling</h4>
+        <h4><i class="glyphicon glyphicon-fire" style="color:var(--neon-red)"></i> Top Selling</h4>
         <hr>
         <table class="table table-modern">
           <thead>
@@ -172,7 +256,7 @@
 
     <div class="col-md-4">
       <div class="dashboard-card">
-        <h4 class="margin-top"><i class="glyphicon glyphicon-time" style="color:#2196f3"></i> Latest Sales</h4>
+        <h4><i class="glyphicon glyphicon-time" style="color:var(--neon-blue)"></i> Latest Sales</h4>
         <hr>
         <table class="table table-modern">
           <thead>
@@ -185,12 +269,12 @@
             <?php foreach ($recent_sales as $recent_sale): ?>
             <tr>
               <td>
-               <a href="edit_sale.php?id=<?php echo (int)$recent_sale['id']; ?>" class="text-dark">
+               <a href="edit_sale.php?id=<?php echo (int)$recent_sale['id']; ?>">
                 <?php echo remove_junk(first_character($recent_sale['name'])); ?>
                </a>
                <div class="small text-muted"><?php echo remove_junk(ucfirst($recent_sale['date'])); ?></div>
               </td>
-              <td class="text-right"><strong>Ksh <?php echo remove_junk(first_character($recent_sale['price'])); ?></strong></td>
+              <td class="text-right"><strong style="color:var(--neon-green)">Ksh <?php echo remove_junk(first_character($recent_sale['price'])); ?></strong></td>
             </tr>
             <?php endforeach; ?>
           </tbody>
@@ -200,11 +284,11 @@
 
     <div class="col-md-4">
       <div class="dashboard-card">
-        <h4 class="margin-top"><i class="glyphicon glyphicon-plus" style="color:#4caf50"></i> Recently Added</h4>
+        <h4><i class="glyphicon glyphicon-plus" style="color:var(--neon-green)"></i> Recently Added</h4>
         <hr>
         <div class="list-group list-group-flush">
           <?php foreach ($recent_products as $recent_product): ?>
-            <a class="list-group-item" href="edit_product.php?id=<?php echo (int)$recent_product['id'];?>" style="border:none; padding: 10px 0;">
+            <div class="list-group-item">
                 <div class="pull-left">
                   <?php if($recent_product['media_id'] === '0'): ?>
                     <img class="img-avatar-small" src="uploads/products/no_image.jpg" alt="">
@@ -212,17 +296,17 @@
                     <img class="img-avatar-small" src="uploads/products/<?php echo $recent_product['image'];?>" alt="" />
                   <?php endif;?>
                 </div>
-                <div class="pull-left">
-                  <h5 class="list-group-item-heading" style="margin:0; font-weight:600;">
-                    <?php echo remove_junk(first_character($recent_product['name']));?>
-                  </h5>
+                <div class="pull-left" style="margin-left: 10px;">
+                  <a href="edit_product.php?id=<?php echo (int)$recent_product['id'];?>">
+                    <h5 style="margin:0;"><?php echo remove_junk(first_character($recent_product['name']));?></h5>
+                  </a>
                   <small class="text-muted"><?php echo remove_junk(first_character($recent_product['categorie'])); ?></small>
                 </div>
-                <span class="pull-right text-success" style="font-weight: bold;">
+                <span class="pull-right text-success">
                   Ksh <?php echo (int)$recent_product['sale_price']; ?>
                 </span>
                 <div class="clearfix"></div>
-            </a>
+            </div>
           <?php endforeach; ?>
         </div>
       </div>

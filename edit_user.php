@@ -71,15 +71,115 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
-  .user-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: none; }
-  .user-card-header { padding: 20px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #1e293b; }
-  .form-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
-  .modern-input { border-radius: 8px; border: 1px solid #e2e8f0; height: 42px; }
-  .btn-action { border-radius: 8px; font-weight: 600; padding: 10px 20px; transition: 0.3s; }
-  .access-guide { background: #f8fafc; border-radius: 8px; padding: 15px; margin-top: 20px; border: 1px solid #e2e8f0; }
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --neon-red: #f43f5e;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: rgba(15, 23, 42, 0.6);
+  }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
+  .user-card { 
+    background: var(--glass-bg); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+    border: 1px solid var(--glass-border); 
+    margin-bottom: 20px;
+    width: auto !important; /* Fit content rule */
+  }
+
+  .user-card-header { 
+    padding: 20px 25px; 
+    border-bottom: 1px solid var(--glass-border); 
+    font-weight: 700; 
+    font-size: 16px;
+    color: var(--text-main); 
+    display: flex;
+    align-items: center;
+  }
+
+  .form-label { 
+    font-size: 10px; 
+    font-weight: 700; 
+    color: var(--neon-blue); 
+    text-transform: uppercase; 
+    letter-spacing: 1.2px;
+    margin-bottom: 10px; 
+    display: block;
+  }
+
+  .modern-input { 
+    background: var(--input-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 10px; 
+    height: 45px; 
+    color: #fff !important;
+    transition: 0.3s;
+  }
+
+  .modern-input:focus {
+    border-color: var(--neon-blue) !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
+    outline: none;
+  }
+
+  .btn-action { 
+    border-radius: 10px; 
+    font-weight: 700; 
+    padding: 12px 25px; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s; 
+    border: none;
+  }
+
+  .btn-update {
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9);
+    color: #fff;
+  }
+
+  .btn-password {
+    background: linear-gradient(135deg, var(--neon-red), #e11d48);
+    color: #fff;
+  }
+
+  .btn-action:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+
+  .access-guide { 
+    background: rgba(15, 23, 42, 0.4); 
+    border-radius: 10px; 
+    padding: 15px; 
+    margin-top: 20px; 
+    border: 1px solid var(--glass-border); 
+  }
+
+  .input-group-addon {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--neon-blue) !important;
+    width: auto;
+  }
+
+  select.modern-input option {
+    background: #1e293b;
+    color: #fff;
+  }
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid" style="padding-top: 20px;">
   <div class="row">
     <div class="col-md-12"><?php echo display_msg($msg); ?></div>
   </div>
@@ -88,9 +188,9 @@
     <div class="col-md-7">
       <div class="user-card">
         <div class="user-card-header">
-          <i class="glyphicon glyphicon-user" style="color:#6366f1;"></i> Profile Configuration
+          <i class="glyphicon glyphicon-user" style="color:var(--neon-blue); margin-right:12px;"></i> Profile Configuration
         </div>
-        <div class="panel-body">
+        <div class="panel-body" style="padding: 25px;">
           <form method="post" action="edit_user.php?id=<?php echo (int)$e_user['id'];?>">
             <div class="row">
               <div class="col-md-6">
@@ -144,17 +244,18 @@
             </div>
 
             <div class="access-guide">
-              <span class="form-label" style="margin-bottom: 5px;">Permissions Quick-Reference:</span>
-              <ul style="padding-left: 20px; font-size: 11px; color: #475569; margin:0;">
-                <li><strong>Admin (L1):</strong> Full system access and user management.</li>
-                <li><strong>Manager (L2):</strong> Inventory edits and location management.</li>
-                <li><strong>Staff (L3):</strong> Sales processing and report printing only.</li>
-              </ul>
+              <span class="form-label" style="color: var(--text-muted); margin-bottom: 8px;">Role Reference</span>
+              <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+                <span style="color:var(--neon-blue)">● Admin:</span> Full system & user control.<br>
+                <span style="color:var(--neon-blue)">● Manager:</span> Inventory & warehouse ops.<br>
+                <span style="color:var(--neon-blue)">● Staff:</span> Sales & basic reporting.
+              </div>
             </div>
 
-            <hr>
-            <button type="submit" name="update" class="btn btn-info btn-action">Update User Profile</button>
-            <a href="users.php" class="btn btn-default btn-action" style="margin-left:10px;">Cancel</a>
+            <div style="margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+              <button type="submit" name="update" class="btn btn-action btn-update">Update Profile</button>
+              <a href="users.php" class="btn btn-default btn-action" style="background: rgba(255,255,255,0.05); color: #fff; margin-left:10px;">Cancel</a>
+            </div>
           </form>
         </div>
       </div>
@@ -162,16 +263,21 @@
 
     <div class="col-md-5">
       <div class="user-card">
-        <div class="user-card-header" style="border-left: 4px solid #ef4444;">
-          <i class="glyphicon glyphicon-lock" style="color:#ef4444;"></i> Security & Password
+        <div class="user-card-header" style="border-left: 4px solid var(--neon-red);">
+          <i class="glyphicon glyphicon-lock" style="color:var(--neon-red); margin-right:12px;"></i> Security & Password
         </div>
-        <div class="panel-body">
+        <div class="panel-body" style="padding: 25px;">
           <form action="edit_user.php?id=<?php echo (int)$e_user['id'];?>" method="post">
             <div class="form-group">
               <label class="form-label">New Password</label>
-              <input type="password" class="form-control modern-input" name="password" placeholder="Create a strong password">
+              <input type="password" class="form-control modern-input" name="password" placeholder="Enter new strong password">
+              <small style="color: var(--text-muted); font-size: 10px; margin-top: 10px; display: block;">
+                Directly overrides current password. Use with caution.
+              </small>
             </div>
-            <button type="submit" name="update-pass" class="btn btn-danger btn-action pull-right">Apply New Password</button>
+            <div style="margin-top: 25px; text-align: right;">
+              <button type="submit" name="update-pass" class="btn btn-action btn-password">Apply New Password</button>
+            </div>
           </form>
         </div>
       </div>

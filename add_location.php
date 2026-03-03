@@ -35,66 +35,144 @@
 <?php include_once('layouts/header.php'); ?>
 
 <style>
+  :root {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: rgba(15, 23, 42, 0.6);
+  }
+
+  body {
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    color: var(--text-main);
+  }
+
   .location-wrapper {
     max-width: 600px;
-    margin: 30px auto;
+    margin: 40px auto;
   }
+
   .config-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    border: none;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    overflow: hidden;
   }
+
   .card-banner {
-    background: #4f46e5;
-    padding: 25px;
-    border-radius: 12px 12px 0 0;
-    color: #fff;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.1));
+    padding: 30px;
+    border-bottom: 1px solid var(--glass-border);
+    text-align: center;
   }
-  .card-banner h3 { margin: 0; font-size: 18px; font-weight: 700; }
-  
-  .form-content { padding: 30px; }
-  
+
+  .card-banner h3 { 
+    margin: 0; 
+    font-size: 20px; 
+    font-weight: 800; 
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+  }
+
+  .form-content { padding: 40px; }
+
   .helper-box {
-    background: #f8fafc;
-    border-left: 4px solid #6366f1;
-    padding: 15px;
-    margin-bottom: 25px;
-    border-radius: 0 8px 8px 0;
+    background: rgba(56, 189, 248, 0.05);
+    border-left: 4px solid var(--neon-blue);
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    border-radius: 4px 12px 12px 4px;
   }
-  .helper-box p { margin-bottom: 5px; font-size: 13px; color: #475569; }
-  
-  .form-group label {
+
+  .helper-box p { 
+    margin-bottom: 5px; 
+    font-size: 13px; 
+    color: var(--text-main); 
     font-weight: 600;
-    color: #334155;
-    font-size: 13px;
-    margin-bottom: 8px;
+  }
+
+  .form-group label {
+    font-weight: 700;
+    color: var(--neon-blue);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
     display: block;
   }
+
   .modern-input {
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    height: 45px;
-    padding: 10px 15px;
-    transition: all 0.2s;
+    background: var(--input-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px;
+    height: 50px;
+    color: #fff !important;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
   }
+
   .modern-input:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: var(--neon-blue) !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
     outline: none;
+    transform: translateY(-1px);
   }
+
+  /* Style for Select dropdown */
+  select.modern-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2338bdf8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 15px;
+  }
+
+  select.modern-input option {
+    background: #1e293b;
+    color: #fff;
+  }
+
   .btn-save-loc {
-    background: #4f46e5;
+    background: linear-gradient(135deg, var(--neon-blue), #0ea5e9);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-weight: 600;
+    border-radius: 12px;
+    padding: 15px 25px;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     width: 100%;
-    margin-top: 15px;
-    transition: all 0.2s;
+    margin-top: 20px;
+    transition: all 0.3s;
+    box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
   }
-  .btn-save-loc:hover { background: #4338ca; transform: translateY(-1px); }
+
+  .btn-save-loc:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 15px 25px rgba(14, 165, 233, 0.4);
+    filter: brightness(1.1);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 25px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: 0.3s;
+  }
+
+  .back-link:hover {
+    color: var(--neon-blue);
+    transform: translateX(-3px);
+  }
 </style>
 
 <div class="container">
@@ -107,13 +185,14 @@
   <div class="location-wrapper">
     <div class="config-card">
       <div class="card-banner">
-        <h3><i class="glyphicon glyphicon-map-marker" style="margin-right: 10px;"></i> Define New Stock Location</h3>
+        <h3><i class="glyphicon glyphicon-map-marker" style="color: var(--neon-blue); margin-right: 12px;"></i> Define New Stock Location</h3>
       </div>
 
       <div class="form-content">
         <div class="helper-box">
-          <p><strong>Pro Tip:</strong> Use a hierarchical naming system for better tracking.</p>
-          <code style="color: #6366f1;">[Aisle]-[Shelf]-[Bin]</code> (e.g., <strong>A1-S2-B05</strong>)
+          <p><i class="glyphicon glyphicon-info-sign"></i> Optimization Strategy</p>
+          <code style="background: transparent; color: var(--neon-blue); font-size: 14px; padding: 0;">[Aisle]-[Shelf]-[Bin]</code>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Example: <strong>A1-S2-B05</strong></div>
         </div>
 
         <form method="post" action="add_location.php">
@@ -124,27 +203,27 @@
 
           <div class="form-group">
               <label>Warehouse Zone</label>
-              <input type="text" class="form-control modern-input" name="zone" placeholder="e.g. Main Floor / Receiving">
+              <input type="text" class="form-control modern-input" name="zone" placeholder="e.g. Main Floor / Cold Storage">
           </div>
 
           <div class="form-group">
             <label>Current Availability</label>
-              <select class="form-control modern-input" name="status" style="height: 45px;">
-                <option value="1">Active (Available for Stock)</option>
+              <select class="form-control modern-input" name="status">
+                <option value="1">Active (Ready for Stock)</option>
                 <option value="0">Inactive (Reserved/Maintenance)</option>
               </select>
           </div>
 
           <button type="submit" name="add_location" class="btn-save-loc">
-            Confirm and Create Location
+            Initialize Location
           </button>
         </form>
       </div>
     </div>
     
-    <div class="text-center" style="margin-top: 20px;">
-      <a href="locations.php" style="color: #64748b; text-decoration: none; font-weight: 500;">
-        <i class="glyphicon glyphicon-list"></i> View All Locations
+    <div class="text-center">
+      <a href="locations.php" class="back-link">
+        <i class="glyphicon glyphicon-arrow-left"></i> Return to Locations
       </a>
     </div>
   </div>

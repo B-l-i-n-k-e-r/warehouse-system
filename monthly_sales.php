@@ -21,87 +21,112 @@
 ?>
 <?php include_once('layouts/header.php'); ?>
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-  body {
-    background-color: #f4f7fa;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  :root {
+    --primary: #38bdf8; 
+    --accent: #22c55e;
+    --dark-bg: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+    --border: rgba(56, 189, 248, 0.1);
   }
 
-  /* Card Styling */
+  body {
+    background-color: var(--dark-bg);
+    background-image: radial-gradient(circle at 2px 2px, rgba(56, 189, 248, 0.05) 1px, transparent 0);
+    background-size: 40px 40px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-main);
+  }
+
+  /* Modern Dark Card */
   .monthly-report-card { 
-    background: #ffffff; 
-    border-radius: 20px; 
-    border: none; 
-    box-shadow: 0 10px 25px rgba(29, 78, 216, 0.05); 
+    background: var(--card-bg); 
+    border-radius: 24px; 
+    border: 1px solid var(--border); 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
     overflow: hidden;
     margin-bottom: 30px;
+    position: relative;
+  }
+
+  .monthly-report-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
   }
 
   .card-header-modern { 
-    background: #ffffff; 
-    border-bottom: 1px solid #f1f5f9; 
+    background: rgba(255, 255, 255, 0.02); 
+    border-bottom: 1px solid var(--border); 
     padding: 25px 30px; 
   }
 
   .card-header-modern h3 {
     margin: 0;
-    font-size: 2.1rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--text-main);
     display: flex;
     align-items: center;
     gap: 12px;
+    letter-spacing: -0.02em;
   }
 
   .panel-body { padding: 30px; }
 
-  /* Form Elements */
+  /* Dark Form Styling */
   .form-label-modern {
-    font-size: 1.7rem;
+    font-size: 0.75rem;
     font-weight: 800;
-    color: #94a3b8;
+    color: var(--primary);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 10px;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
     display: block;
   }
 
   .datepicker, .form-control { 
-    border: 1.5px solid #e2e8f0;
+    background: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid var(--border);
     border-radius: 12px !important; 
-    height: 50px;
-    padding-left: 15px;
+    height: 54px;
+    color: #fff !important;
     font-weight: 500;
-    color: #334155;
-    transition: all 0.2s;
+    transition: all 0.3s;
   }
 
   .form-control:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+    background: rgba(15, 23, 42, 0.8) !important;
   }
 
   .input-group-addon {
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid var(--border);
     border-left: none;
     border-right: none;
-    color: #94a3b8;
+    color: var(--primary);
   }
 
-  /* Main Button */
+  /* Neon Button */
   .btn-generate-report { 
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    background: var(--primary);
     border: none; 
-    color: white;
-    font-weight: 700; 
-    height: 54px; 
-    border-radius: 14px; 
-    margin-top: 15px;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    transition: all 0.3s;
+    color: var(--dark-bg);
+    font-weight: 800; 
+    height: 56px; 
+    border-radius: 16px; 
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
     display: flex;
     align-items: center;
@@ -110,12 +135,17 @@
   }
 
   .btn-generate-report:hover { 
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
-    opacity: 0.95;
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
   }
 
-  .chart-container { position: relative; height: 350px; width: 100%; }
+  .chart-container { position: relative; height: 380px; width: 100%; }
+
+  select.form-control option {
+    background: var(--card-bg);
+    color: #fff;
+  }
 </style>
 
 <div class="container-fluid" style="padding: 40px;">
@@ -124,8 +154,8 @@
       <div class="monthly-report-card">
         <div class="card-header-modern">
           <h3>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            Report Parameters
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Parameters
           </h3>
         </div>
         <div class="panel-body">
@@ -135,11 +165,11 @@
               <div class="input-group">
                 <input type="text" class="datepicker form-control" name="start-date" value="<?php echo date('Y-m-01'); ?>">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-arrow-right"></i></span>
-                <input type="text" class="datepicker form-control" name="end-date" value="<?php echo date('Y-m-d'); ?>">
+                <input type="text" class="datepicker form-control" name="end-date" value="<?php echo date('Y-m-t'); ?>">
               </div>
             </div>
             
-            <div class="form-group" style="margin-top: 20px;">
+            <div class="form-group" style="margin-top: 25px;">
               <label class="form-label-modern">Warehouse Filter</label>
               <select class="form-control" name="location_id">
                 <option value="">All Warehouse Locations</option>
@@ -150,8 +180,8 @@
             </div>
 
             <button type="submit" name="submit" class="btn btn-generate-report">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-              Export Monthly Analysis
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              Export Report
             </button>
           </form>
         </div>
@@ -162,8 +192,8 @@
       <div class="monthly-report-card">
         <div class="card-header-modern">
           <h3>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20V16"></path></svg>
-            Quantity Outflow Trend (<?php echo date('F Y'); ?>)
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20V16"></path></svg>
+            Outflow Trend (<?php echo date('F Y'); ?>)
           </h3>
         </div>
         <div class="panel-body">
@@ -180,10 +210,10 @@
 <script>
 const ctxMonth = document.getElementById('monthlyQtyChart').getContext('2d');
 
-// Create a professional soft blue gradient
-const blueGradient = ctxMonth.createLinearGradient(0, 0, 0, 350);
-blueGradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
-blueGradient.addColorStop(1, 'rgba(59, 130, 246, 0.02)');
+// Refined Cyan-to-Transparent Gradient
+const cyanGradient = ctxMonth.createLinearGradient(0, 0, 0, 400);
+cyanGradient.addColorStop(0, 'rgba(56, 189, 248, 0.4)');
+cyanGradient.addColorStop(1, 'rgba(15, 23, 42, 0)');
 
 new Chart(ctxMonth, {
   type: 'line',
@@ -192,40 +222,43 @@ new Chart(ctxMonth, {
     datasets: [{
       label: 'Units Shipped',
       data: <?php echo json_encode($qty_totals); ?>,
-      borderColor: '#3b82f6',
-      backgroundColor: blueGradient,
+      borderColor: '#38bdf8',
+      backgroundColor: cyanGradient,
       borderWidth: 4,
       fill: true,
       tension: 0.4,
-      pointRadius: 0, // Hidden by default for a cleaner line
-      pointHoverRadius: 7,
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: '#3b82f6',
+      pointRadius: 4,
+      pointBackgroundColor: '#0f172a',
+      pointBorderColor: '#38bdf8',
+      pointBorderWidth: 2,
+      pointHoverRadius: 8,
+      pointHoverBackgroundColor: '#38bdf8',
+      pointHoverBorderColor: '#fff',
       pointHoverBorderWidth: 3
     }]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    interaction: {
-      intersect: false,
-      mode: 'index',
-    },
     plugins: {
       legend: { display: false },
       tooltip: {
         backgroundColor: '#1e293b',
-        titleFont: { size: 13, family: 'Plus Jakarta Sans' },
+        titleColor: '#38bdf8',
+        bodyColor: '#fff',
+        titleFont: { size: 14, weight: 'bold', family: 'Plus Jakarta Sans' },
         bodyFont: { size: 13, family: 'Plus Jakarta Sans' },
-        padding: 12,
-        cornerRadius: 10,
-        displayColors: false
+        padding: 15,
+        cornerRadius: 12,
+        displayColors: false,
+        borderColor: 'rgba(56, 189, 248, 0.2)',
+        borderWidth: 1
       }
     },
     scales: {
       y: {
         beginAtZero: true,
-        grid: { borderDash: [8, 4], color: '#f1f5f9', drawBorder: false },
+        grid: { color: 'rgba(148, 163, 184, 0.05)', drawBorder: false },
         ticks: { color: '#94a3b8', font: { size: 11, weight: '600' } }
       },
       x: {

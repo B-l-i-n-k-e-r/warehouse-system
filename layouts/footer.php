@@ -1,21 +1,20 @@
-</div> </div> 
-<?php if ($session->isUserLoggedIn(true)): ?>
+</div> </div> <?php if ($session->isUserLoggedIn(true)): ?>
     <footer class="footer">
       <div class="container-fluid">
-        <div class="row" style="display: flex; align-items: center;">
-          <div class="col-sm-6">
+        <div class="footer-flex">
+          <div class="footer-left">
             <span class="copyright">
               © <?php echo date("Y"); ?> 
-              <strong>WMS <span class="brand-accent">Pro</span></strong>. 
-              All rights reserved.
+              <span class="brand-text">MoonLit <span class="brand-accent">WMS</span></span>. 
+              <span class="reserved">All rights reserved.</span>
             </span>
           </div>
 
-          <div class="col-sm-6 text-right">
-            <span class="system-status">
+          <div class="footer-right">
+            <div class="system-status-pill">
               <span class="status-indicator"></span>
-              System Operational
-            </span>
+              <span class="status-label">Core Engine Operational</span>
+            </div>
           </div>
         </div>
       </div>
@@ -23,66 +22,114 @@
   <?php endif; ?>
 
   <style>
+    /* --- MoonLit Footer Aesthetics --- */
     .footer {
-      background: #ffffff;
-      padding: 25px 35px; 
-      border-top: 2px solid #f1f5f9;
-      font-size: 1rem; 
-      font-weight: 500;
-      color: #64748b;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 20px 0;
+      border-top: 1px solid rgba(56, 189, 248, 0.1);
+      color: #94a3b8;
+      margin-top: 50px;
       position: relative;
       z-index: 10;
     }
 
-    .brand-accent {
-      color: #3b82f6;
-      font-weight: 800;
-      font-size: 1.1rem; 
+    .footer-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
     }
 
-    .system-status {
-      font-weight: 700;
-      color: #1e293b;
+    .brand-text {
+      color: #fff;
+      font-weight: 800;
+      margin-left: 5px;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-accent {
+      color: #38bdf8; /* Matched to your MoonLit Accent */
+    }
+
+    .reserved {
+      margin-left: 10px;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.5;
+    }
+
+    /* --- System Status Pill --- */
+    .system-status-pill {
       display: inline-flex;
       align-items: center;
-      background: #f8fafc;
-      padding: 8px 16px;
+      background: rgba(16, 185, 129, 0.08);
+      padding: 6px 16px;
       border-radius: 50px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .system-status-pill:hover {
+      background: rgba(16, 185, 129, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-label {
+      color: #10b981;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .status-indicator {
-      height: 12px;
-      width: 12px;
+      height: 8px;
+      width: 8px;
       background: #10b981;
       border-radius: 50%;
       display: inline-block;
       margin-right: 10px;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
-      animation: pulse 2s infinite;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+      animation: status-pulse 2s infinite;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    @keyframes status-pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 18px rgba(16, 185, 129, 0.8); }
+      100% { transform: scale(0.9); opacity: 0.8; }
     }
 
-    .page {
-      <?php if ($session->isUserLoggedIn(true)): ?>
-        margin-bottom: 40px;
-      <?php else: ?>
-        margin-bottom: 0;
-        padding-top: 0; 
-      <?php endif; ?>
-    }
-
+    /* --- UI Components Fixes --- */
     .datepicker {
-      font-size: 1.1rem !important;
-      padding: 20px !important;
-      border-radius: 20px !important;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.12) !important;
-      border: 1px solid #e2e8f0 !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      border-radius: 12px !important;
+      padding: 10px !important;
+      border: 1px solid rgba(56, 189, 248, 0.1) !important;
+      background: #1e293b !important;
+      color: #f8fafc !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .datepicker table tr td.day:hover {
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-radius: 8px;
+    }
+
+    .datepicker table tr td.active {
+      background: #38bdf8 !important;
+      color: #0f172a !important;
+      font-weight: 800;
+      border-radius: 8px !important;
+    }
+    
+    /* Global Content Fitting Utility */
+    .table-fit {
+      width: auto !important;
+      white-space: nowrap !important;
     }
   </style>
 
@@ -93,6 +140,7 @@
 
   <script>
     $(document).ready(function() {
+      // Modern Datepicker Init
       $('.datepicker').datepicker({
         format: 'yyyy-mm-dd',
         todayHighlight: true,
