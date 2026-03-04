@@ -54,13 +54,14 @@ if (isset($_POST['submit'])) {
     
     <style>
         :root {
-            --primary: #38bdf8; 
-            --accent: #22c55e;
+            --primary: #38bdf8; /* Neon Blue */
+            --accent: #22c55e;  /* Green */
             --dark-bg: #0f172a;
             --card-bg: #1e293b;
             --text-main: #f8fafc;
-            --text-dim: #94a3b8;
+            --text-dim: #94a3b8; /* Date & Product Color */
             --border: rgba(56, 189, 248, 0.2);
+            --qty-grey: #475569; /* Dark Grey for Quantity */
         }
 
         body {
@@ -127,6 +128,7 @@ if (isset($_POST['submit'])) {
             margin-bottom: 0;
         }
 
+        /* FIT CONTENT LOGIC */
         .table thead th, 
         .table tbody td {
             white-space: nowrap;
@@ -135,6 +137,7 @@ if (isset($_POST['submit'])) {
             vertical-align: middle;
         }
 
+        /* Allow description to wrap if absolutely necessary but maintain space */
         .table .col-desc {
             width: auto;
             white-space: normal;
@@ -155,11 +158,26 @@ if (isset($_POST['submit'])) {
             border-bottom: 1px solid var(--border);
         }
 
+        /* Colors as per request */
         .product-name {
             font-weight: 600;
-            color: #fff;
+            color: var(--text-dim); /* Matches Date color */
             display: block;
         }
+
+        .qty-text {
+            color: var(--qty-grey); /* Dark Grey */
+            font-weight: 800;
+        }
+
+        .total-neon {
+            color: var(--primary); /* Neon Blue */
+            font-weight: 800;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .profit-up { color: var(--accent); font-weight: 800; } /* Green */
+        .profit-down { color: #f87171; font-weight: 800; }
 
         .summary-grid {
             display: grid;
@@ -201,9 +219,6 @@ if (isset($_POST['submit'])) {
             border-radius: 4px;
         }
 
-        .profit-up { color: var(--accent); font-weight: 800; }
-        .profit-down { color: #f87171; font-weight: 800; }
-
         .btn-print {
             background: var(--primary);
             color: var(--dark-bg);
@@ -225,7 +240,8 @@ if (isset($_POST['submit'])) {
             .report-card { border: 1px solid #ddd; box-shadow: none; background: #fff !important; }
             .report-card::before, .no-print { display: none; }
             .summary-item { background: #f8fafc !important; border: 1px solid #ddd !important; }
-            .summary-value, .product-name { color: #000 !important; }
+            .summary-value { color: #000 !important; }
+            .product-name, .qty-text, .total-neon { color: #000 !important; text-shadow: none !important; }
             .table thead th { color: #444 !important; background: #eee !important; }
         }
     </style>
@@ -303,9 +319,9 @@ if (isset($_POST['submit'])) {
                                 Ksh <?php echo number_format($result['sale_price'], 0);?>
                             </td>
                             
-                            <td class="text-center fw-bold"><?php echo (int)$result['qty'];?></td>
+                            <td class="text-center qty-text"><?php echo (int)$result['qty'];?></td>
                             
-                            <td class="text-end" style="color: var(--primary); font-weight: 700;">
+                            <td class="text-end total-neon">
                                 Ksh <?php echo number_format($result['total_selling_price'], 0);?>
                             </td>
                             

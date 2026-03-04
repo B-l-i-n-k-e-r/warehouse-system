@@ -104,7 +104,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 14px !important;
     color: #fff !important;
-    padding: 12px 20px 12px 45px !important;
+    padding: 12px 45px 12px 45px !important; /* Adjusted for both icons */
     height: 55px !important;
     width: 100%;
     transition: all 0.3s ease !important;
@@ -124,6 +124,23 @@
     color: #94a3b8;
     font-size: 18px;
     z-index: 2;
+  }
+
+  /* Show Password Eye Icon Style */
+  .toggle-password {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    cursor: pointer;
+    z-index: 3;
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+
+  .toggle-password:hover {
+    color: #0099ff;
   }
 
   .btn-submit {
@@ -155,7 +172,6 @@
     font-weight: 500;
   }
 
-  /* Custom styling for standard alerts */
   .alert {
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.1);
@@ -184,11 +200,13 @@
         <div class="form-group">
             <i class="fas fa-lock input-icon"></i>
             <input type="password" id="password" class="form-control" name="new_password" placeholder="New Password" required autofocus>
+            <i class="fas fa-eye toggle-password" data-target="password"></i>
         </div>
 
         <div class="form-group">
             <i class="fas fa-shield-alt input-icon"></i>
             <input type="password" id="confirm_password" class="form-control" name="confirm_password" placeholder="Confirm New Password" required>
+            <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
             <span id="match_msg" class="match-indicator"></span>
         </div>
 
@@ -200,6 +218,22 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+// Toggle Password Visibility
+$('.toggle-password').on('click', function() {
+  const targetId = $(this).data('target');
+  const input = $('#' + targetId);
+  const icon = $(this);
+
+  if (input.attr('type') === 'password') {
+    input.attr('type', 'text');
+    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+  } else {
+    input.attr('type', 'password');
+    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+  }
+});
+
+// Match Logic
 $('#confirm_password, #password').on('keyup', function () {
   const p1 = $('#password').val();
   const p2 = $('#confirm_password').val();
